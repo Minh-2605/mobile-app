@@ -42,7 +42,7 @@ const Login = ({ navigation }: any) => {  // Thêm navigation vào props
       <TouchableOpacity
       onPress={() => router.push("/auth/register")}
       style={styles.linkButton}>
-        <Text style={styles.linkText}>Chua co tai khoan dang ky</Text>
+        <Text style={styles.linkText}>Chua co tai khoan? dang ky</Text>
       </TouchableOpacity>
     </View>
   );
