@@ -41,3 +41,7 @@ app-example
 # generated native folders
 /ios
 /android
+
+# Chặn node_modules của backend
+backend/node_modules
+backend/.env
