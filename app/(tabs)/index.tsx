@@ -1,98 +1,156 @@
 import { Image } from 'expo-image';
-import { Platform, StyleSheet } from 'react-native';
-
+import { StyleSheet, ScrollView, TouchableOpacity, TextInput, View } from 'react-native';
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Link } from 'expo-router';
 
+// 1. Dữ liệu 6 món ăn
+export const FOOD_ITEMS = [
+  { id: '1', name: 'Double Cheese Burger', price: '89.000đ', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=500', desc: 'Bò nướng vỉ thơm lừng, 2 lớp phô mai tan chảy kèm rau xà lách tươi.' },
+  { id: '2', name: 'Pizza Hải Sản Size L', price: '159.000đ', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=500', desc: 'Tôm, mực tươi ngon kết hợp với sốt pesto đặc biệt trên nền đế bánh giòn.' },
+  { id: '3', name: 'Gà Rán Giòn Cay', price: '45.000đ', image: 'https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=500', desc: 'Gà tươi ướp gia vị cay nồng, chiên giòn rụm bên ngoài nhưng mềm mọng bên trong.' },
+  { id: '4', name: 'Mì Ý Sốt Bò Bằm', price: '75.000đ', image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=500', desc: 'Sợi mì Ý dai ngon hòa quyện cùng sốt cà chua thịt bò bằm đậm đà.' },
+  { id: '5', name: 'Trà Sữa Trân Châu', price: '40.000đ', image: 'https://images.unsplash.com/photo-1576092768241-dec231879fc3?q=80&w=500', desc: 'Trà sữa đậm vị trà, ngọt thanh cùng trân châu đen dai giòn sần sật.' },
+];
+
 export default function HomeScreen() {
   return (
     <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
+      headerBackgroundColor={{ light: '#F8B400', dark: '#2D2D2D' }}
       headerImage={
         <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+          source={{ uri: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000&auto=format&fit=crop' }}
+          style={styles.headerBanner}
         />
       }>
+
+      {/* Lời chào */}
       <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
+        <View>
+          <ThemedText type="title">Hello Foodie!</ThemedText>
+          <ThemedText type="default">Hôm nay bạn muốn ăn gì?</ThemedText>
+        </View>
         <HelloWave />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12',
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <Link href="/modal">
-          <Link.Trigger>
-            <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-          </Link.Trigger>
-          <Link.Preview />
-          <Link.Menu>
-            <Link.MenuAction title="Action" icon="cube" onPress={() => alert('Action pressed')} />
-            <Link.MenuAction
-              title="Share"
-              icon="square.and.arrow.up"
-              onPress={() => alert('Share pressed')}
-            />
-            <Link.Menu title="More" icon="ellipsis">
-              <Link.MenuAction
-                title="Delete"
-                icon="trash"
-                destructive
-                onPress={() => alert('Delete pressed')}
-              />
-            </Link.Menu>
-          </Link.Menu>
-        </Link>
 
-        <ThemedText>
-          {`Tap the Explore tab to learn more about what's included in this starter app.`}
-        </ThemedText>
+      {/* Thanh tìm kiếm */}
+      <ThemedView style={styles.searchContainer}>
+        <TextInput
+          placeholder="Tìm món ăn ngon ngay..."
+          placeholderTextColor="#888"
+          style={styles.searchInput}
+        />
       </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          {`When you're ready, run `}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
+
+      {/* Danh mục */}
+      <ThemedView style={styles.sectionContainer}>
+        <ThemedText type="subtitle">Danh mục</ThemedText>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.categoryList}>
+          {['🍔 Burger', '🍕 Pizza', '🍗 Gà rán', '🍟 Khoai tây', '🥤 Đồ uống', '🍝 Mì Ý'].map((cat, index) => (
+            <TouchableOpacity key={index} style={styles.categoryItem}>
+              <ThemedText type="defaultSemiBold">{cat}</ThemedText>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
       </ThemedView>
+
+      {/* Danh sách 6 món ăn */}
+      <ThemedView style={styles.sectionContainer}>
+        <ThemedText type="subtitle">Món ăn phổ biến 🔥</ThemedText>
+
+        {FOOD_ITEMS.map((item) => (
+          <Link key={item.id} href={`/product/${item.id}`} asChild>
+            <TouchableOpacity style={styles.foodCard}>
+              <Image
+                source={{ uri: item.image }}
+                style={styles.foodImage}
+              />
+              <ThemedView style={styles.foodInfo}>
+                <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
+                <ThemedText style={styles.priceText}>{item.price}</ThemedText>
+                <ThemedText type="default" numberOfLines={1} style={styles.descText}>
+                  {item.desc}
+                </ThemedText>
+              </ThemedView>
+            </TouchableOpacity>
+          </Link>
+        ))}
+      </ThemedView>
+
     </ParallaxScrollView>
   );
 }
 
 const styles = StyleSheet.create({
+  headerBanner: {
+    height: '100%',
+    width: '100%',
+    position: 'absolute',
+  },
   titleContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    justifyContent: 'space-between',
+    marginVertical: 10,
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  searchContainer: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 12,
+    paddingHorizontal: 15,
+    paddingVertical: 12,
+    marginVertical: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  searchInput: {
+    fontSize: 16,
+    color: '#333',
+  },
+  sectionContainer: {
+    gap: 12,
+    marginTop: 20,
+  },
+  categoryList: {
+    gap: 10,
+    paddingVertical: 5,
+  },
+  categoryItem: {
+    backgroundColor: '#FFEAA7',
+    paddingHorizontal: 18,
+    paddingVertical: 10,
+    borderRadius: 25,
+    borderWidth: 1,
+    borderColor: '#F8B400',
+  },
+  foodCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    overflow: 'hidden',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3, // Bóng đổ cho Android
+  },
+  foodImage: {
+    width: 110,
+    height: 110,
+  },
+  foodInfo: {
+    flex: 1,
+    padding: 12,
+    justifyContent: 'center',
+  },
+  priceText: {
+    color: '#FF4D4D',
+    fontWeight: 'bold',
+    fontSize: 18,
+    marginVertical: 4,
+  },
+  descText: {
+    fontSize: 13,
+    color: '#666',
   },
 });
