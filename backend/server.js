@@ -53,6 +53,6 @@ app.post('/login', async (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, () => {
-    console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`);
-    console.log("💡 Chế độ: Lưu trữ bằng Mảng (RAM)");
+    console.log(`Server đang chạy tại http://localhost:${PORT}`);
+    console.log("Chế độ: Lưu trữ bằng Mảng (RAM)");
 });

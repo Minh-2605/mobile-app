@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -9,10 +9,11 @@ export default function LoginScreen() {
     const [loading, setLoading] = useState(false);
     const router = useRouter();
 
-    // LƯU Ý: Thay '192.168.1.X' bằng địa chỉ IP thật của máy tính bạn
+    // KIỂM TRA LẠI: Đảm bảo IP này trùng với IPv4 máy tính của bạn
     const API_URL = 'http://192.168.100.220:5000/login';
 
     const handleLogin = async () => {
+        // 1. Kiểm tra đầu vào
         if (!email || !password) {
             Alert.alert("Thông báo", "Vui lòng nhập đầy đủ email và mật khẩu");
             return;
@@ -20,6 +21,7 @@ export default function LoginScreen() {
 
         setLoading(true);
         try {
+            // 2. Gửi yêu cầu tới Backend
             const response = await fetch(API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -28,23 +30,29 @@ export default function LoginScreen() {
 
             const data = await response.json();
 
+            // 3. Xử lý kết quả trả về
             if (response.ok) {
-                // Lưu Token vào bộ nhớ máy để dùng cho các API sau này
                 await AsyncStorage.setItem('userToken', data.token);
-                Alert.alert("Thành công", "Chào mừng bạn quay trở lại!");
-                router.replace('/(tabs)'); // Vào trang chủ index.tsx
+                await AsyncStorage.setItem('userEmail', email);
+
+                setTimeout(() => {
+                    // Thử thay đổi sang đường dẫn trực tiếp của file index
+                    router.replace('/(tabs)');
+                    // Hoặc nếu vẫn không được, hãy thử: router.push('/(tabs)');
+                }, 100);
             } else {
                 Alert.alert("Thất bại", data.message || "Email hoặc mật khẩu không đúng");
             }
-        } catch (error) {
-            Alert.alert("Lỗi", "Không thể kết nối tới server. Hãy kiểm tra địa chỉ IP.");
+        } catch (error: any) {
+            // Sửa lỗi 'unknown' type bằng cách thêm : any
+            Alert.alert("Lỗi kết nối", "Không thể kết nối tới server. Lỗi: " + (error.message || "Unknown error"));
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.container}>
             <View style={styles.headerBox}>
                 <Text style={styles.emoji}>🍔</Text>
                 <Text style={styles.title}>FastFood Login</Text>
@@ -86,12 +94,12 @@ export default function LoginScreen() {
                     Chưa có tài khoản? <Text style={styles.boldBlue}>Đăng ký ngay</Text>
                 </Text>
             </TouchableOpacity>
-        </View>
+        </ScrollView>
     );
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff', padding: 25, justifyContent: 'center' },
+    container: { flexGrow: 1, backgroundColor: '#fff', padding: 25, justifyContent: 'center' },
     headerBox: { alignItems: 'center', marginBottom: 40 },
     emoji: { fontSize: 60, marginBottom: 10 },
     title: { fontSize: 28, fontWeight: 'bold', color: '#333' },
@@ -110,10 +118,6 @@ const styles = StyleSheet.create({
         padding: 18,
         borderRadius: 12,
         alignItems: 'center',
-        shadowColor: '#F8B400',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
         elevation: 5
     },
     disabledButton: { backgroundColor: '#ccc' },
