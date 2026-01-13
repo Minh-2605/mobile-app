@@ -1,4 +1,4 @@
-import { useLocalSearchParams, useRouter, router } from 'expo-router';
+import { useLocalSearchParams, router } from 'expo-router';
 import { View, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
