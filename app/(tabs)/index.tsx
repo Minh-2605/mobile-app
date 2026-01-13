@@ -9,7 +9,7 @@ import { useState, useEffect } from 'react';
 
 // 1. Dữ liệu gốc
 export const FOOD_ITEMS = [
-  { id: '1', name: 'Double Cheese Burger', price: '89.000đ', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=500', desc: 'Bò nướng vỉ thơm lừng, 2 lớp phô mai tan chảy kèm rau xà lách tươi.' },
+  { id: '1', name: 'Bánh Burger Phô Mai', price: '89.000đ', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=500', desc: 'Bò nướng vỉ thơm lừng, 2 lớp phô mai tan chảy kèm rau xà lách tươi.' },
   { id: '2', name: 'Pizza Hải Sản Size L', price: '159.000đ', image: 'https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=500', desc: 'Tôm, mực tươi ngon kết hợp với sốt pesto đặc biệt trên nền đế bánh giòn.' },
   { id: '3', name: 'Gà Rán Giòn Cay', price: '45.000đ', image: 'https://images.unsplash.com/photo-1562967914-608f82629710?q=80&w=500', desc: 'Gà tươi ướp gia vị cay nồng, chiên giòn rụm bên ngoài nhưng mềm mọng bên trong.' },
   { id: '4', name: 'Mì Ý Sốt Bò Bằm', price: '75.000đ', image: 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?q=80&w=500', desc: 'Sợi mì Ý dai ngon hòa quyện cùng sốt cà chua thịt bò bằm đậm đà.' },

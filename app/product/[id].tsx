@@ -1,18 +1,29 @@
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { View, StyleSheet, Image, ScrollView, TouchableOpacity } from 'react-native';
+import { useLocalSearchParams, useRouter, router } from 'expo-router';
+import { View, StyleSheet, Image, ScrollView, TouchableOpacity, Alert } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { FOOD_ITEMS } from '../(tabs)/index';
+import { addToCart } from '../cart-store';
 
 export default function ProductDetailScreen() {
-    const { id } = useLocalSearchParams();
-    const router = useRouter();
+  const { id } = useLocalSearchParams();
+  const item = FOOD_ITEMS.find((f) => f.id === id);
 
-    // Tìm món ăn dựa trên ID
-    const item = FOOD_ITEMS.find((f) => f.id === id);
+  // Hàm xử lý khi nhấn nút
+  const handleAdd = () => {
+    if (item) {
+      addToCart(item); // Thêm vào store
+      
+      // Hiển thị thông báo Alert ngay lập tức
+      Alert.alert(
+        "Thành công",
+        `Đã thêm món ${item.name} vào giỏ hàng!`,
+        [{ text: "Đóng", style: "cancel" }]
+      );
+    }
+  };
 
-    if (!item) return <ThemedText>Không tìm thấy sản phẩm</ThemedText>;
-
+  if (!item) return null;
     return (
         <ScrollView style={styles.container}>
             <Image source={{ uri: item.image }} style={styles.image} />
@@ -26,8 +37,14 @@ export default function ProductDetailScreen() {
                 <ThemedText type="subtitle" style={{ color: '#c55858' }}>Mô tả sản phẩm</ThemedText>
                 <ThemedText style={styles.description}>{item.desc}</ThemedText>
 
-                <TouchableOpacity style={styles.button} onPress={() => alert('Đã thêm vào giỏ hàng!')}>
-                    <ThemedText style={styles.buttonText}>Thêm vào giỏ hàng</ThemedText>
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={handleAdd} 
+                >
+                
+                    <ThemedText style={{ color: 'white', fontWeight: 'bold' }}>
+                        THÊM VÀO GIỎ HÀNG
+                    </ThemedText>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
