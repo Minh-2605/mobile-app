@@ -47,3 +47,6 @@ export const getTotalPrice = () => {
     return total + numericPrice * item.quantity;
   }, 0);
 };
+export const getCartCount = () => {
+  return globalCart.reduce((count, item) => count + item.quantity, 0);
+};

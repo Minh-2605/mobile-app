@@ -129,8 +129,8 @@ const styles = StyleSheet.create({
   },
   qtyBtnText: { fontSize: 18, fontWeight: 'bold' },
   qtyValue: { marginHorizontal: 15, fontSize: 16, fontWeight: 'bold' },
-  deleteBtn: { padding: 8, marginLeft: 5 },
-  deleteBtnText: { color: '#c72b2bff', fontSize: 12, textDecorationLine: 'underline' },
+  deleteBtn: { padding: 8, marginLeft: 5, backgroundColor:'#FF4D4D', borderRadius: 12, },
+  deleteBtnText: { color: '#fffdfdff', fontSize: 17,  },
   
   // Styles mới cho footer
   footer: {
