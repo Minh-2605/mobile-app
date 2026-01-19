@@ -6,7 +6,7 @@ import { addToCart } from '../cart-store';
 import { useState, useEffect } from 'react';
 
 // Sử dụng chung địa chỉ IP với file index
-const API_URL = "http://192.168.5.1:5000/products"; 
+const API_URL = "http://192.168.100.220:5000/products";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams();
@@ -53,11 +53,11 @@ export default function ProductDetailScreen() {
 
       <ThemedView style={styles.content}>
         <ThemedView style={styles.tagCategory}>
-           <ThemedText style={styles.tagText}>{item.category}</ThemedText>
+          <ThemedText style={styles.tagText}>{item.category}</ThemedText>
         </ThemedView>
 
         <ThemedText type="title" style={{ color: '#d78f31' }}>{item.name}</ThemedText>
-        
+
         {/* Format giá tiền đồng bộ với trang index */}
         <ThemedText style={styles.price}>
           {typeof item.price === 'number' ? `${item.price.toLocaleString()}đ` : item.price}
@@ -69,9 +69,9 @@ export default function ProductDetailScreen() {
         {/* Ưu tiên lấy description từ database */}
         <ThemedText style={styles.description}>{item.description || item.desc}</ThemedText>
 
-        <TouchableOpacity 
-          style={styles.button} 
-          onPress={handleAdd} 
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleAdd}
         >
           <ThemedText style={{ color: 'white', fontWeight: 'bold', fontSize: 16 }}>
             THÊM VÀO GIỎ HÀNG
@@ -87,32 +87,32 @@ export default function ProductDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: '#fff' },
-    image: { width: '100%', height: 350 },
-    content: { 
-      padding: 25, 
-      borderTopLeftRadius: 30, 
-      borderTopRightRadius: 30, 
-      marginTop: -30, 
-      backgroundColor: '#fff',
-      shadowColor: "#000",
-      shadowOffset: { width: 0, height: -3 },
-      shadowOpacity: 0.1,
-      shadowRadius: 5,
-      elevation: 5
-    },
-    tagCategory: { 
-      backgroundColor: '#F0F0F0', 
-      alignSelf: 'flex-start', 
-      paddingHorizontal: 10, 
-      paddingVertical: 4, 
-      borderRadius: 6, 
-      marginBottom: 10 
-    },
-    tagText: { fontSize: 12, color: '#888', fontWeight: 'bold' },
-    price: { fontSize: 26, fontWeight: 'bold', color: '#FF4D4D', marginVertical: 10 },
-    divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
-    description: { lineHeight: 24, color: '#444', fontSize: 15 },
-    button: { backgroundColor: '#F8B400', padding: 18, borderRadius: 15, marginTop: 30, alignItems: 'center' },
-    backButton: { marginTop: 25, alignItems: 'center', paddingBottom: 30 }
+  container: { flex: 1, backgroundColor: '#fff' },
+  image: { width: '100%', height: 350 },
+  content: {
+    padding: 25,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    marginTop: -30,
+    backgroundColor: '#fff',
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 5
+  },
+  tagCategory: {
+    backgroundColor: '#F0F0F0',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 10,
+    paddingVertical: 4,
+    borderRadius: 6,
+    marginBottom: 10
+  },
+  tagText: { fontSize: 12, color: '#888', fontWeight: 'bold' },
+  price: { fontSize: 26, fontWeight: 'bold', color: '#FF4D4D', marginVertical: 10 },
+  divider: { height: 1, backgroundColor: '#eee', marginVertical: 15 },
+  description: { lineHeight: 24, color: '#444', fontSize: 15 },
+  button: { backgroundColor: '#F8B400', padding: 18, borderRadius: 15, marginTop: 30, alignItems: 'center' },
+  backButton: { marginTop: 25, alignItems: 'center', paddingBottom: 30 }
 });

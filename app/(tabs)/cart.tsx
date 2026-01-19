@@ -2,12 +2,12 @@ import { StyleSheet, FlatList, View, TouchableOpacity, Alert } from 'react-nativ
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { Image } from 'expo-image';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, router } from 'expo-router'; // Thêm router để chuyển trang
 import { useCallback, useState } from 'react';
 import { globalCart, incrementQuantity, decrementQuantity, removeFromCart, getTotalPrice } from '../cart-store';
 
 export default function CartScreen() {
-  const [items, setItems] = useState([...globalCart]);
+  const [items, setItems] = useState<any[]>([]);
 
   const refreshCart = () => {
     setItems([...globalCart]);
@@ -15,7 +15,10 @@ export default function CartScreen() {
 
   useFocusEffect(
     useCallback(() => {
-      refreshCart();
+      // Buộc React tạo ra một mảng mới hoàn toàn từ globalCart 
+      // để nó nhận diện sự thay đổi (đặc biệt là khi mảng rỗng)
+      const currentItems = [...globalCart];
+      setItems(currentItems);
     }, [])
   );
 
@@ -27,38 +30,56 @@ export default function CartScreen() {
   // Tính tổng tiền từ store
   const total = getTotalPrice();
 
+  // --- PHẦN SỬA ĐỔI CHÍNH Ở ĐÂY ---
+  const handleGoToCheckout = () => {
+    if (items.length === 0) {
+      Alert.alert("Thông báo", "Giỏ hàng của bạn đang trống!");
+      return;
+    }
+
+    // Chuyển hướng sang trang checkout và truyền số tiền tổng qua params
+    router.push({
+      pathname: '/checkout',
+      params: { total: total }
+    });
+  };
+  // -------------------------------
+
   return (
     <ThemedView style={styles.container}>
       <ThemedText type="title" style={styles.headerTitle}>Giỏ hàng</ThemedText>
-      
+
       {items.length === 0 ? (
         <ThemedText style={styles.emptyText}>Giỏ hàng đang trống 😢</ThemedText>
       ) : (
         <>
           <FlatList
             data={items}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item) => item.id.toString()} // toString để đảm bảo key là string
             contentContainerStyle={{ paddingBottom: 20 }}
             renderItem={({ item }) => (
               <View style={styles.cartItem}>
                 <Image source={{ uri: item.image }} style={styles.itemImage} />
-                
+
                 <View style={styles.itemInfo}>
                   <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
-                  <ThemedText style={styles.priceText}>{item.price}</ThemedText>
-                  
+                  {/* Format lại hiển thị giá tiền cho đẹp */}
+                  <ThemedText style={styles.priceText}>
+                    {typeof item.price === 'number' ? `${item.price.toLocaleString('vi-VN')}đ` : item.price}
+                  </ThemedText>
+
                   <View style={styles.quantityContainer}>
-                    <TouchableOpacity 
-                      style={styles.qtyBtn} 
+                    <TouchableOpacity
+                      style={styles.qtyBtn}
                       onPress={() => { decrementQuantity(item.id); refreshCart(); }}
                     >
                       <ThemedText style={styles.qtyBtnText}>-</ThemedText>
                     </TouchableOpacity>
-                    
+
                     <ThemedText style={styles.qtyValue}>{item.quantity}</ThemedText>
-                    
-                    <TouchableOpacity 
-                      style={styles.qtyBtn} 
+
+                    <TouchableOpacity
+                      style={styles.qtyBtn}
                       onPress={() => { incrementQuantity(item.id); refreshCart(); }}
                     >
                       <ThemedText style={styles.qtyBtnText}>+</ThemedText>
@@ -66,8 +87,8 @@ export default function CartScreen() {
                   </View>
                 </View>
 
-                <TouchableOpacity 
-                  style={styles.deleteBtn} 
+                <TouchableOpacity
+                  style={styles.deleteBtn}
                   onPress={() => handleRemove(item.id)}
                 >
                   <ThemedText style={styles.deleteBtnText}>Xóa</ThemedText>
@@ -76,7 +97,6 @@ export default function CartScreen() {
             )}
           />
 
-          {/* Phần Tổng tiền và Thanh toán */}
           <View style={styles.footer}>
             <View style={styles.totalRow}>
               <ThemedText type="subtitle">Tổng cộng:</ThemedText>
@@ -84,12 +104,13 @@ export default function CartScreen() {
                 {total.toLocaleString('vi-VN')}đ
               </ThemedText>
             </View>
-            
-            <TouchableOpacity 
+
+            {/* Thay đổi hàm onPress tại đây */}
+            <TouchableOpacity
               style={styles.checkoutBtn}
-              onPress={() => Alert.alert("Thanh toán", "Cảm ơn bạn đã đặt hàng!")}
+              onPress={handleGoToCheckout}
             >
-              <ThemedText style={styles.checkoutText}>THANH TOÁN NGAY</ThemedText>
+              <ThemedText style={styles.checkoutText}>TIẾP TỤC THANH TOÁN</ThemedText>
             </TouchableOpacity>
           </View>
         </>
@@ -98,15 +119,16 @@ export default function CartScreen() {
   );
 }
 
+// Giữ nguyên styles bên dưới...
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 20, paddingTop: 60 },
   headerTitle: { marginBottom: 20, color: '#F8B400' },
   emptyText: { textAlign: 'center', marginTop: 50, color: '#888' },
-  cartItem: { 
-    flexDirection: 'row', 
-    backgroundColor: '#fff', 
-    borderRadius: 15, 
-    padding: 10, 
+  cartItem: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    padding: 10,
     marginBottom: 15,
     elevation: 2,
     shadowColor: '#000',
@@ -119,20 +141,19 @@ const styles = StyleSheet.create({
   itemInfo: { flex: 1, marginLeft: 12 },
   priceText: { color: '#FF4D4D', fontWeight: 'bold', fontSize: 14 },
   quantityContainer: { flexDirection: 'row', alignItems: 'center', marginTop: 8 },
-  qtyBtn: { 
-    backgroundColor: '#f0f0f0', 
-    width: 30, 
-    height: 30, 
-    borderRadius: 15, 
-    justifyContent: 'center', 
-    alignItems: 'center' 
+  qtyBtn: {
+    backgroundColor: '#f0f0f0',
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   qtyBtnText: { fontSize: 18, fontWeight: 'bold' },
   qtyValue: { marginHorizontal: 15, fontSize: 16, fontWeight: 'bold' },
-  deleteBtn: { padding: 8, marginLeft: 5, backgroundColor:'#FF4D4D', borderRadius: 12, },
-  deleteBtnText: { color: '#fffdfdff', fontSize: 17,  },
-  
-  // Styles mới cho footer
+  deleteBtn: { padding: 8, marginLeft: 5, backgroundColor: '#FF4D4D', borderRadius: 12, },
+  deleteBtnText: { color: '#fff', fontSize: 14, },
+
   footer: {
     borderTopWidth: 1,
     borderTopColor: '#eee',

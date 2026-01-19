@@ -38,10 +38,10 @@ app.post('/register', async (req, res) => {
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
-        
+
         // Lưu vào bảng users
         await db.promise().query('INSERT INTO users (email, password) VALUES (?, ?)', [email, hashedPassword]);
-        
+
         res.status(201).json({ message: "Đăng ký thành công!" });
     } catch (error) {
         res.status(500).json({ message: "Lỗi hệ thống", error });
@@ -91,8 +91,60 @@ app.get('/products', async (req, res) => {
     }
 });
 
+
+app.post('/checkout', (req, res) => {
+    const total_price = Number(req.body.total_price);
+    const { receiver_name, phone, address, items } = req.body;
+
+    // Bước 1: Lưu thông tin đơn hàng và người nhận vào bảng orders
+    const sqlOrder = "INSERT INTO orders (receiver_name, phone, address, total_price) VALUES (?, ?, ?, ?)";
+
+    const isNumeric = /^\d+$/.test(phone);
+
+    if (!isNumeric) {
+        return res.status(400).json({ error: "Số điện thoại không hợp lệ" });
+    }
+
+    db.query(sqlOrder, [receiver_name, phone, address, total_price], (err, result) => {
+        if (err) {
+            console.error("Lỗi lưu orders:", err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        const orderId = result.insertId; // Lấy ID của đơn hàng vừa tạo
+
+        // Bước 2: Chuẩn bị dữ liệu để lưu nhiều món ăn cùng lúc vào order_items
+        // Xử lý giá tiền để đảm bảo luôn là số
+        const itemValues = items.map(item => [
+            orderId,
+            item.id,
+            item.quantity,
+            typeof item.price === 'number' ? item.price : parseInt(item.price.toString().replace(/[^0-9]/g, ''))
+        ]);
+
+        const sqlItems = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?";
+
+        db.query(sqlItems, [itemValues], (err2) => {
+            if (err2) {
+                console.error("Lỗi lưu order_items:", err2);
+                return res.status(500).json({ error: err2.message });
+            }
+
+            console.log(`Đơn hàng #${orderId} đã được lưu thành công!`);
+            res.json({ message: "Đặt hàng thành công!", orderId: orderId });
+        });
+    });
+});
+
+
+
+
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
     console.log("Chế độ: MySQL (XAMPP)");
 });
+
+
+

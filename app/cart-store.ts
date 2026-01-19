@@ -5,13 +5,24 @@
 export interface CartItem {
   id: string;
   name: string;
-  price: string;
+  price: number;
   image: string;
   quantity: number;
 }
 
 // Chỉ khai báo biến này một lần duy nhất
-export let globalCart: CartItem[] = []; 
+export let globalCart: CartItem[] = [];
+
+export const clearCart = () => {
+  // Dùng cách này để xóa sạch mảng mà không làm mất tham chiếu
+  globalCart.length = 0;
+  console.log("Đã xóa sạch giỏ hàng");
+};
+
+export const getTotalPrice = () => {
+  // Bây giờ item.price và item.quantity sẽ không còn bị gạch đỏ
+  return globalCart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+};
 
 export const addToCart = (product: any) => {
   const existingItem = globalCart.find(item => item.id === product.id);
@@ -40,13 +51,10 @@ export const removeFromCart = (id: string) => {
 
 // 6. Hàm tính tổng tiền (Bổ sung thêm)
 
-export const getTotalPrice = () => {
-  return globalCart.reduce((total, item) => {
-    // Loại bỏ dấu chấm và chữ 'đ' để chuyển thành số
-    const numericPrice = parseInt(item.price.replace(/\./g, '').replace('đ', ''));
-    return total + numericPrice * item.quantity;
-  }, 0);
-};
+
+
 export const getCartCount = () => {
   return globalCart.reduce((count, item) => count + item.quantity, 0);
 };
+// app/cart-store.ts
+

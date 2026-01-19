@@ -8,7 +8,7 @@ import { Link } from 'expo-router';
 import { useState, useEffect } from 'react';
 
 // Cấu hình địa chỉ IP máy tính của bạn (Thay đổi XX bằng IP thật)
-const API_URL = "http://192.168.5.1:5000/products"; 
+const API_URL = "http://192.168.100.220:5000/products";
 
 
 const CATEGORIES = [
@@ -25,7 +25,7 @@ export default function HomeScreen() {
   const [allFoods, setAllFoods] = useState<any[]>([]);
   const [filteredFoods, setFilteredFoods] = useState<any[]>([]);
   const [activeTab, setActiveTab] = useState('Tất cả');
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
 
   // 1. Gọi API khi component mount
   useEffect(() => {
@@ -33,18 +33,18 @@ export default function HomeScreen() {
   }, []);
 
   const fetchProducts = async () => {
-  try {
-    const response = await fetch(API_URL);
-    const data = await response.json();
-    console.log("Dữ liệu nhận được:", data); // Kiểm tra xem có thấy mảng sp không
-    setAllFoods(data);
-    setFilteredFoods(data);
-  } catch (error) {
-    console.error("Lỗi Fetch:", error); // Nếu lỗi IP sẽ báo ở đây
-  } finally {
-    setLoading(false);
-  }
-};
+    try {
+      const response = await fetch(API_URL);
+      const data = await response.json();
+      console.log("Dữ liệu nhận được:", data); // Kiểm tra xem có thấy mảng sp không
+      setAllFoods(data);
+      setFilteredFoods(data);
+    } catch (error) {
+      console.error("Lỗi Fetch:", error); // Nếu lỗi IP sẽ báo ở đây
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const removeVietnameseTones = (str: string) => {
     return str
@@ -125,10 +125,10 @@ export default function HomeScreen() {
 
       <ThemedView style={styles.sectionContainer}>
         <View style={styles.sectionHeader}>
-           <ThemedText type="subtitle">
-             {activeTab !== 'Tất cả' ? activeTab : "Món ăn phổ biến 🔥"}
-           </ThemedText>
-           <ThemedText style={{color: '#888'}}>{filteredFoods.length} món</ThemedText>
+          <ThemedText type="subtitle">
+            {activeTab !== 'Tất cả' ? activeTab : "Món ăn phổ biến 🔥"}
+          </ThemedText>
+          <ThemedText style={{ color: '#888' }}>{filteredFoods.length} món</ThemedText>
         </View>
 
         {loading ? (
@@ -140,7 +140,7 @@ export default function HomeScreen() {
                 <Image source={{ uri: item.image }} style={styles.foodImage} />
                 <ThemedView style={styles.foodInfo}>
                   <View style={styles.tagCategory}>
-                     <ThemedText style={styles.tagText}>{item.category}</ThemedText>
+                    <ThemedText style={styles.tagText}>{item.category}</ThemedText>
                   </View>
                   <ThemedText type="defaultSemiBold">{item.name}</ThemedText>
                   {/* Nếu DB lưu giá là số, hãy format lại. Ví dụ: 89000 -> 89.000đ */}
@@ -155,7 +155,7 @@ export default function HomeScreen() {
             </Link>
           ))
         )}
-        
+
         {!loading && filteredFoods.length === 0 && (
           <ThemedText style={styles.noResultText}>Rất tiếc, không tìm thấy món này 😢</ThemedText>
         )}
@@ -187,30 +187,30 @@ const styles = StyleSheet.create({
     color: '#888',
     fontStyle: 'italic'
   },
-  
-  categoryItemActive: { 
-    backgroundColor: '#F8B400', 
-    borderColor: '#F8B400' 
+
+  categoryItemActive: {
+    backgroundColor: '#F8B400',
+    borderColor: '#F8B400'
   },
   categoryText: { color: '#333', fontSize: 14 },
   categoryTextActive: { color: '#fff', fontWeight: 'bold' },
-  
+
   // Tag danh mục trên card sản phẩm
-  tagCategory: { 
-    backgroundColor: '#F0F0F0', 
-    alignSelf: 'flex-start', 
-    paddingHorizontal: 8, 
-    paddingVertical: 2, 
-    borderRadius: 4, 
-    marginBottom: 4 
+  tagCategory: {
+    backgroundColor: '#F0F0F0',
+    alignSelf: 'flex-start',
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+    borderRadius: 4,
+    marginBottom: 4
   },
   tagText: { fontSize: 10, color: '#888', fontWeight: 'bold' },
-  
-  sectionHeader: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    marginBottom: 5 
+
+  sectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 5
   },
-  
+
 });

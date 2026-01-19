@@ -62,6 +62,7 @@ export default function ProfileScreen() {
 
       </ParallaxScrollView>
 
+
       {/* Đưa nút lên vị trí cao hơn một chút để tránh bị thanh Tab che */}
       <View style={{ position: 'absolute', bottom: 120, left: 30, right: 30, zIndex: 1000 }}>
         <TouchableOpacity
@@ -117,4 +118,13 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  historyBtn: {
+    backgroundColor: '#ff4444',
+    padding: 15,
+    borderRadius: 10,
+    alignItems: 'center',
+    zIndex: 999, // Đảm bảo nút nằm trên cùng
+    marginTop: 20,
+    position: 'relative',
+  }
 });
