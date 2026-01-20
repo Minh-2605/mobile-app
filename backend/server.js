@@ -139,54 +139,54 @@ const nodemailer = require('nodemailer');
 
 // 1. Cấu hình gửi email dùng App Password (16 ký tự)
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'phananhminhzxy@gmail.com', // Phải là email này
-    pass: 'jhij idui nndp cvvy'      // 16 ký tự App Password của Google
-  }
+    service: 'gmail',
+    auth: {
+        user: 'phananhminhzxy@gmail.com', // Phải là email này
+        pass: 'jhij idui nndp cvvy'      // 16 ký tự App Password của Google
+    }
 });
 
 // Thêm đoạn này để kiểm tra lỗi ngay khi chạy Server
 transporter.verify((error, success) => {
-  if (error) {
-    console.log("Lỗi cấu hình Email:", error);
-  } else {
-    console.log("Server đã sẵn sàng gửi OTP!");
-  }
+    if (error) {
+        console.log("Lỗi cấu hình Email:", error);
+    } else {
+        console.log("Server đã sẵn sàng gửi OTP!");
+    }
 });
 
 let otpStore = {}; // Lưu mã OTP tạm thời: { email: otp_code }
 
 // 2. API Gửi OTP
 app.post('/send-otp', (req, res) => {
-  const { email } = req.body;
+    const { email } = req.body;
 
-  db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
-    if (err) return res.status(500).json(err);
-    if (results.length === 0) {
-      return res.status(404).json({ error: "Email không tồn tại!" });
-    }
+    db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
+        if (err) return res.status(500).json(err);
+        if (results.length === 0) {
+            return res.status(404).json({ error: "Email không tồn tại!" });
+        }
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
-    // PHẢI THÊM DÒNG NÀY: Lưu mã vào bộ nhớ tạm để xác thực sau này
-    otpStore[email] = otp; 
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const mailOptions = {
-      from: 'phananhminhzxy@gmail.com',
-      to: email, 
-      subject: 'Mã OTP xác nhận',
-      text: `Mã OTP của bạn là: ${otp}`
-    };
+        // PHẢI THÊM DÒNG NÀY: Lưu mã vào bộ nhớ tạm để xác thực sau này
+        otpStore[email] = otp;
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        console.log("Lỗi gửi mail:", error);
-        return res.status(500).json({ error: "Lỗi gửi email" });
-      }
-      res.json({ message: "OTP đã được gửi thành công!" });
+        const mailOptions = {
+            from: 'phananhminhzxy@gmail.com',
+            to: email,
+            subject: 'Mã OTP xác nhận',
+            text: `Mã OTP của bạn là: ${otp}`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.log("Lỗi gửi mail:", error);
+                return res.status(500).json({ error: "Lỗi gửi email" });
+            }
+            res.json({ message: "OTP đã được gửi thành công!" });
+        });
     });
-  });
 });
 
 // 3. API Xác nhận OTP và Đổi mật khẩu
@@ -197,7 +197,7 @@ app.post('/verify-otp-reset', async (req, res) => { // Thêm async ở đây
         try {
             // MÃ HÓA MẬT KHẨU MỚI TRƯỚC KHI LƯU
             const hashedPassword = await bcrypt.hash(newPassword, 10);
-            
+
             const sql = "UPDATE users SET password = ? WHERE email = ?";
             db.query(sql, [hashedPassword, email], (err, result) => {
                 if (err) return res.status(500).json({ error: "Lỗi database" });
@@ -240,22 +240,23 @@ app.post('/change-password', async (req, res) => {
 });
 
 
-
 const moment = require('moment');
 const crypto = require('crypto');
 const qs = require('qs');
 
+app.use(cors());
+app.use(express.json());
+
 app.post('/create-vnpay-qr', (req, res) => {
     const { amount } = req.body;
+    console.log("Số tiền Server nhận được từ App:", amount);
     const date = new Date();
     const createDate = moment(date).format('YYYYMMDDHHmmss');
-    
-    // ĐIỀN MÃ BẠN LẤY TỪ EMAIL VÀO ĐÂY
-    const tmnCode = "2QXG2YWS"; 
-    const secretKey = "XNBCJ7H2983DB233BDBS";
-    
+
+    const tmnCode = "8ZLFVM2Q";
+    const secretKey = "KKBMG7C8TKAQ5MQDGJ35NH5EBT9H8AN8";
     const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    const returnUrl = "myapp://payment-result"; 
+    const returnUrl = "myapp://payment-result";
 
     let vnp_Params = {
         'vnp_Version': '2.1.0',
@@ -263,28 +264,38 @@ app.post('/create-vnpay-qr', (req, res) => {
         'vnp_TmnCode': tmnCode,
         'vnp_Locale': 'vn',
         'vnp_CurrCode': 'VND',
-        'vnp_TxnRef': moment(date).format('HHmmss'), 
-        'vnp_OrderInfo': 'Thanh toan qua QR',
+        'vnp_TxnRef': moment(date).format('YYYYMMDDHHmmss'),
+        'vnp_OrderInfo': 'Thanh toan don hang QR',
         'vnp_OrderType': 'other',
-        'vnp_Amount': amount * 100, // VNPAY tính theo đơn vị đồng x 100
+        'vnp_Amount': Math.floor(amount * 100),
         'vnp_ReturnUrl': returnUrl,
         'vnp_IpAddr': '127.0.0.1',
         'vnp_CreateDate': createDate,
     };
 
-    // Sắp xếp tham số theo alphabet (Bắt buộc)
-    vnp_Params = Object.keys(vnp_Params).sort().reduce((obj, key) => {
-        obj[key] = vnp_Params[key];
-        return obj;
-    }, {});
+    // BƯỚC 1: Sắp xếp tham số (Hàm sortObject thủ công)
+    const sortedParams = {};
+    const keys = Object.keys(vnp_Params).sort();
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i];
+        const value = vnp_Params[key];
+        // Quan trọng: Encode và thay %20 thành dấu + đúng như bạn tìm hiểu
+        sortedParams[key] = encodeURIComponent(value).replace(/%20/g, "+");
+    }
 
-    // Tạo chữ ký bảo mật
-    const signData = qs.stringify(vnp_Params, { encode: false });
+    // BƯỚC 2: Tạo chuỗi băm signData từ các params đã sort và format
+    const signData = Object.keys(sortedParams)
+        .map(key => `${key}=${sortedParams[key]}`)
+        .join('&');
+
+    // BƯỚC 3: Băm HMAC-SHA512
     const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex"); 
-    vnp_Params['vnp_SecureHash'] = signed;
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
 
-    const finalUrl = vnpUrl + '?' + qs.stringify(vnp_Params, { encode: false });
+    // BƯỚC 4: Tạo URL cuối cùng (Nối thêm SecureHash)
+    const finalUrl = vnpUrl + '?' + signData + '&vnp_SecureHash=' + signed;
+
+    console.log("===> LINK CHUẨN FORMAT VNPAY:", finalUrl);
     res.json({ paymentUrl: finalUrl });
 });
 

@@ -1,6 +1,4 @@
-// app/cart-store.ts
 
-// app/cart-store.ts
 
 export interface CartItem {
   id: string;

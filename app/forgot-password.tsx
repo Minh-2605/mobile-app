@@ -5,7 +5,7 @@ import { ThemedView } from '@/components/themed-view';
 import { router } from 'expo-router';
 
 export default function ForgotPassword() {
-    const [email, setEmail] = useState('phananhminhzxy@gmail.com');
+    const [email, setEmail] = useState('');
     const [otp, setOtp] = useState('');
     const [newPass, setNewPass] = useState('');
     const [isSent, setIsSent] = useState(false);
@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     const handleSendOTP = async () => {
         setLoading(true);
         try {
-            const res = await fetch("http://192.168.5.1:5000/send-otp", {
+            const res = await fetch("http://192.168.100.220:5000/send-otp", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -33,28 +33,28 @@ export default function ForgotPassword() {
     };
 
     const handleReset = async () => {
-    if (!otp || !newPass) {
-        Alert.alert("Lỗi", "Vui lòng nhập đủ mã OTP và mật khẩu mới");
-        return;
-    }
-
-    try {
-        const res = await fetch("http://192.168.5.1:5000/verify-otp-reset", {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, otp, newPassword: newPass })
-        });
-
-        if (res.ok) {
-            router.replace('/login')
-        } else {
-            const errorData = await res.json();
-            Alert.alert("Thất bại", errorData.error || "Mã OTP không đúng");
+        if (!otp || !newPass) {
+            Alert.alert("Lỗi", "Vui lòng nhập đủ mã OTP và mật khẩu mới");
+            return;
         }
-    } catch (error) {
-        Alert.alert("Lỗi", "Không thể kết nối đến máy chủ");
-    }
-};
+
+        try {
+            const res = await fetch("http://192.168.100.220:5000/verify-otp-reset", {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp, newPassword: newPass })
+            });
+
+            if (res.ok) {
+                router.replace('/login')
+            } else {
+                const errorData = await res.json();
+                Alert.alert("Thất bại", errorData.error || "Mã OTP không đúng");
+            }
+        } catch (error) {
+            Alert.alert("Lỗi", "Không thể kết nối đến máy chủ");
+        }
+    };
 
     return (
         <ThemedView style={styles.container}>
@@ -64,20 +64,20 @@ export default function ForgotPassword() {
                     {!isSent ? "Nhập email để nhận mã xác thực OTP" : "Nhập mã OTP 6 số và đặt mật khẩu mới"}
                 </ThemedText>
             </View>
-            
+
             <View style={styles.form}>
                 {!isSent ? (
                     <>
-                        <TextInput 
-                            value={email} 
-                            onChangeText={setEmail} 
-                            placeholder="Email đăng ký" 
+                        <TextInput
+                            value={email}
+                            onChangeText={setEmail}
+                            placeholder="Email đăng ký"
                             style={styles.input}
                             keyboardType="email-address"
                             autoCapitalize="none"
                         />
-                        <TouchableOpacity 
-                            onPress={handleSendOTP} 
+                        <TouchableOpacity
+                            onPress={handleSendOTP}
                             style={styles.btn}
                             disabled={loading}
                         >
@@ -86,23 +86,23 @@ export default function ForgotPassword() {
                     </>
                 ) : (
                     <>
-                        <TextInput 
-                            value={otp} 
-                            onChangeText={setOtp} 
-                            placeholder="Nhập mã OTP 6 số" 
+                        <TextInput
+                            value={otp}
+                            onChangeText={setOtp}
+                            placeholder="Nhập mã OTP 6 số"
                             style={styles.input}
                             keyboardType="number-pad"
                             maxLength={6}
                         />
-                        <TextInput 
-                            value={newPass} 
-                            onChangeText={setNewPass} 
-                            placeholder="Mật khẩu mới" 
-                            secureTextEntry 
-                            style={styles.input} 
+                        <TextInput
+                            value={newPass}
+                            onChangeText={setNewPass}
+                            placeholder="Mật khẩu mới"
+                            secureTextEntry
+                            style={styles.input}
                         />
-                        <TouchableOpacity 
-                            onPress={handleReset} 
+                        <TouchableOpacity
+                            onPress={handleReset}
                             style={styles.btn}
                             disabled={loading}
                         >
@@ -125,20 +125,20 @@ const styles = StyleSheet.create({
     title: { fontSize: 28, fontWeight: 'bold', color: '#333', marginBottom: 10 },
     subtitle: { fontSize: 15, color: '#666', textAlign: 'center', paddingHorizontal: 20 },
     form: { width: '100%' },
-    input: { 
+    input: {
         backgroundColor: '#F5F5F5',
-        borderWidth: 1, 
-        borderColor: '#EEE', 
-        padding: 16, 
-        borderRadius: 12, 
+        borderWidth: 1,
+        borderColor: '#EEE',
+        padding: 16,
+        borderRadius: 12,
         marginBottom: 15,
         fontSize: 16,
         color: '#333'
     },
-    btn: { 
-        backgroundColor: '#F8B400', 
-        paddingVertical: 16, 
-        borderRadius: 12, 
+    btn: {
+        backgroundColor: '#F8B400',
+        paddingVertical: 16,
+        borderRadius: 12,
         alignItems: 'center',
         marginTop: 10,
         // Hiệu ứng đổ bóng (Shadow)

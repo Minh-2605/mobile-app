@@ -9,7 +9,7 @@ export default function ChangePassword() {
   const [oldPass, setOldPass] = useState('');
   const [newPass, setNewPass] = useState('');
   const [confirmPass, setConfirmPass] = useState('');
-  const email = "phananhminhzxy@gmail.com"; 
+  const email = "phananhminhzxy@gmail.com";
 
   const handleChange = async () => {
     if (!oldPass || !newPass || !confirmPass) {
@@ -22,7 +22,7 @@ export default function ChangePassword() {
     }
 
     try {
-      const res = await fetch("http://192.168.5.1:5000/change-password", {
+      const res = await fetch("http://192.168.100.220:5000/change-password", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, oldPassword: oldPass, newPassword: newPass })
@@ -34,8 +34,8 @@ export default function ChangePassword() {
       } else {
         Alert.alert("Thất bại", data.message);
       }
-    } catch (e) { 
-      Alert.alert("Lỗi", "Không kết nối được server"); 
+    } catch (e) {
+      Alert.alert("Lỗi", "Không kết nối được server");
     }
   };
 
@@ -46,7 +46,7 @@ export default function ChangePassword() {
         <IconSymbol name="chevron.left" size={24} color="#333" />
       </TouchableOpacity>
 
-      <KeyboardAvoidingView 
+      <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.inner}
       >
@@ -61,33 +61,33 @@ export default function ChangePassword() {
         <View style={styles.form}>
           <View style={styles.inputContainer}>
             <IconSymbol name="key.fill" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput 
-              placeholder="Mật khẩu hiện tại" 
-              secureTextEntry 
-              style={styles.input} 
-              onChangeText={setOldPass} 
+            <TextInput
+              placeholder="Mật khẩu hiện tại"
+              secureTextEntry
+              style={styles.input}
+              onChangeText={setOldPass}
               placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.inputContainer}>
             <IconSymbol name="lock.shield.fill" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput 
-              placeholder="Mật khẩu mới" 
-              secureTextEntry 
-              style={styles.input} 
-              onChangeText={setNewPass} 
+            <TextInput
+              placeholder="Mật khẩu mới"
+              secureTextEntry
+              style={styles.input}
+              onChangeText={setNewPass}
               placeholderTextColor="#999"
             />
           </View>
 
           <View style={styles.inputContainer}>
             <IconSymbol name="checkmark.shield.fill" size={20} color="#999" style={styles.inputIcon} />
-            <TextInput 
-              placeholder="Xác nhận mật khẩu mới" 
-              secureTextEntry 
-              style={styles.input} 
-              onChangeText={setConfirmPass} 
+            <TextInput
+              placeholder="Xác nhận mật khẩu mới"
+              secureTextEntry
+              style={styles.input}
+              onChangeText={setConfirmPass}
               placeholderTextColor="#999"
             />
           </View>
@@ -139,11 +139,11 @@ const styles = StyleSheet.create({
   },
   inputIcon: { marginRight: 10 },
   input: { flex: 1, paddingVertical: 15, fontSize: 16, color: '#333' },
-  btn: { 
-    backgroundColor: '#F8B400', 
-    padding: 18, 
-    borderRadius: 15, 
-    alignItems: 'center', 
+  btn: {
+    backgroundColor: '#F8B400',
+    padding: 18,
+    borderRadius: 15,
+    alignItems: 'center',
     marginTop: 20,
     shadowColor: '#F8B400',
     shadowOffset: { width: 0, height: 4 },
