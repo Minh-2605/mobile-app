@@ -8,7 +8,7 @@ import { Link } from 'expo-router';
 import { useState, useEffect } from 'react';
 
 // Cấu hình địa chỉ IP máy tính của bạn (Thay đổi XX bằng IP thật)
-const API_URL = "http://192.168.100.220:5000/products";
+const API_URL = "http://192.168.5.1:5000/products";
 
 
 const CATEGORIES = [

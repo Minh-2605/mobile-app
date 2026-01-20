@@ -6,7 +6,7 @@ import { addToCart } from '../cart-store';
 import { useState, useEffect } from 'react';
 
 // Sử dụng chung địa chỉ IP với file index
-const API_URL = "http://192.168.100.220:5000/products";
+const API_URL = "http://192.168.5.1:5000/products";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams();

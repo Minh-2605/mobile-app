@@ -3,7 +3,6 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const mysql = require('mysql2'); // 1. Import mysql2
-
 const app = express();
 app.use(express.json());
 app.use(cors());
@@ -136,9 +135,82 @@ app.post('/checkout', (req, res) => {
     });
 });
 
+const nodemailer = require('nodemailer');
 
+// 1. Cấu hình gửi email dùng App Password (16 ký tự)
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'phananhminhzxy@gmail.com', // Phải là email này
+    pass: 'jhij idui nndp cvvy'      // 16 ký tự App Password của Google
+  }
+});
 
+// Thêm đoạn này để kiểm tra lỗi ngay khi chạy Server
+transporter.verify((error, success) => {
+  if (error) {
+    console.log("Lỗi cấu hình Email:", error);
+  } else {
+    console.log("Server đã sẵn sàng gửi OTP!");
+  }
+});
 
+let otpStore = {}; // Lưu mã OTP tạm thời: { email: otp_code }
+
+// 2. API Gửi OTP
+app.post('/send-otp', (req, res) => {
+  const { email } = req.body;
+
+  db.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
+    if (err) return res.status(500).json(err);
+    if (results.length === 0) {
+      return res.status(404).json({ error: "Email không tồn tại!" });
+    }
+
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    // PHẢI THÊM DÒNG NÀY: Lưu mã vào bộ nhớ tạm để xác thực sau này
+    otpStore[email] = otp; 
+
+    const mailOptions = {
+      from: 'phananhminhzxy@gmail.com',
+      to: email, 
+      subject: 'Mã OTP xác nhận',
+      text: `Mã OTP của bạn là: ${otp}`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        console.log("Lỗi gửi mail:", error);
+        return res.status(500).json({ error: "Lỗi gửi email" });
+      }
+      res.json({ message: "OTP đã được gửi thành công!" });
+    });
+  });
+});
+
+// 3. API Xác nhận OTP và Đổi mật khẩu
+app.post('/verify-otp-reset', async (req, res) => { // Thêm async ở đây
+    const { email, otp, newPassword } = req.body;
+
+    if (otpStore[email] && otpStore[email] === otp) {
+        try {
+            // MÃ HÓA MẬT KHẨU MỚI TRƯỚC KHI LƯU
+            const hashedPassword = await bcrypt.hash(newPassword, 10);
+            
+            const sql = "UPDATE users SET password = ? WHERE email = ?";
+            db.query(sql, [hashedPassword, email], (err, result) => {
+                if (err) return res.status(500).json({ error: "Lỗi database" });
+                delete otpStore[email];
+                res.json({ message: "Mật khẩu đã được thay đổi thành công!" });
+            });
+        } catch (error) {
+            res.status(500).json({ error: "Lỗi mã hóa mật khẩu" });
+        }
+    } else {
+        res.status(400).json({ error: "Mã OTP không đúng hoặc đã hết hạn" });
+    }
+});
 
 const PORT = 5000;
 app.listen(PORT, () => {

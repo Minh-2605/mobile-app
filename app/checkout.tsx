@@ -28,7 +28,7 @@ export default function CheckoutScreen() {
 
         try {
             console.log("Bắt đầu gửi đơn hàng...");
-            const response = await fetch("http://192.168.100.220:5000/checkout", {
+            const response = await fetch("http://192.168.5.1:5000/checkout", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

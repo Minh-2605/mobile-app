@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView,  } from 'react-native';
 import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -10,7 +10,7 @@ export default function LoginScreen() {
     const router = useRouter();
 
     // KIỂM TRA LẠI: Đảm bảo IP này trùng với IPv4 máy tính của bạn
-    const API_URL = 'http://192.168.100.220:5000/login';
+    const API_URL = 'http://192.168.5.1:5000/login';
 
     const handleLogin = async () => {
         // 1. Kiểm tra đầu vào
@@ -93,6 +93,9 @@ export default function LoginScreen() {
                 <Text style={styles.linkText}>
                     Chưa có tài khoản? <Text style={styles.boldBlue}>Đăng ký ngay</Text>
                 </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => router.push('/forgot-password')}>
+                <Text style={{ marginTop: 15, color: '#888' }}>Quên mật khẩu?</Text>
             </TouchableOpacity>
         </ScrollView>
     );
