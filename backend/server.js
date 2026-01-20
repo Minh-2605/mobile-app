@@ -239,6 +239,56 @@ app.post('/change-password', async (req, res) => {
     }
 });
 
+
+
+const moment = require('moment');
+const crypto = require('crypto');
+const qs = require('qs');
+
+app.post('/create-vnpay-qr', (req, res) => {
+    const { amount } = req.body;
+    const date = new Date();
+    const createDate = moment(date).format('YYYYMMDDHHmmss');
+    
+    // ĐIỀN MÃ BẠN LẤY TỪ EMAIL VÀO ĐÂY
+    const tmnCode = "2QXG2YWS"; 
+    const secretKey = "XNBCJ7H2983DB233BDBS";
+    
+    const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
+    const returnUrl = "myapp://payment-result"; 
+
+    let vnp_Params = {
+        'vnp_Version': '2.1.0',
+        'vnp_Command': 'pay',
+        'vnp_TmnCode': tmnCode,
+        'vnp_Locale': 'vn',
+        'vnp_CurrCode': 'VND',
+        'vnp_TxnRef': moment(date).format('HHmmss'), 
+        'vnp_OrderInfo': 'Thanh toan qua QR',
+        'vnp_OrderType': 'other',
+        'vnp_Amount': amount * 100, // VNPAY tính theo đơn vị đồng x 100
+        'vnp_ReturnUrl': returnUrl,
+        'vnp_IpAddr': '127.0.0.1',
+        'vnp_CreateDate': createDate,
+    };
+
+    // Sắp xếp tham số theo alphabet (Bắt buộc)
+    vnp_Params = Object.keys(vnp_Params).sort().reduce((obj, key) => {
+        obj[key] = vnp_Params[key];
+        return obj;
+    }, {});
+
+    // Tạo chữ ký bảo mật
+    const signData = qs.stringify(vnp_Params, { encode: false });
+    const hmac = crypto.createHmac("sha512", secretKey);
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex"); 
+    vnp_Params['vnp_SecureHash'] = signed;
+
+    const finalUrl = vnpUrl + '?' + qs.stringify(vnp_Params, { encode: false });
+    res.json({ paymentUrl: finalUrl });
+});
+
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
