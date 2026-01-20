@@ -212,6 +212,33 @@ app.post('/verify-otp-reset', async (req, res) => { // Thêm async ở đây
     }
 });
 
+// API: Thay đổi mật khẩu từ trang cá nhân
+app.post('/change-password', async (req, res) => {
+    const { email, oldPassword, newPassword } = req.body;
+
+    try {
+        // 1. Tìm user trong MySQL
+        const [rows] = await db.promise().query('SELECT * FROM users WHERE email = ?', [email]);
+        const user = rows[0];
+
+        if (!user) return res.status(404).json({ message: "Không tìm thấy user" });
+
+        // 2. Kiểm tra mật khẩu cũ có khớp với mã Hash trong DB không
+        const isMatch = await bcrypt.compare(oldPassword, user.password);
+        if (!isMatch) {
+            return res.status(400).json({ message: "Mật khẩu cũ không đúng" });
+        }
+
+        // 3. Hash mật khẩu mới và UPDATE
+        const hashedNew = await bcrypt.hash(newPassword, 10);
+        await db.promise().query('UPDATE users SET password = ? WHERE email = ?', [hashedNew, email]);
+
+        res.json({ message: "Đổi mật khẩu thành công" });
+    } catch (error) {
+        res.status(500).json({ message: "Lỗi Server" });
+    }
+});
+
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
