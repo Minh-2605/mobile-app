@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     const handleSendOTP = async () => {
         setLoading(true);
         try {
-            const res = await fetch("http://192.168.100.220:5000/send-otp", {
+            const res = await fetch("http://192.168.5.1:5000/send-otp", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -39,7 +39,7 @@ export default function ForgotPassword() {
         }
 
         try {
-            const res = await fetch("http://192.168.100.220:5000/verify-otp-reset", {
+            const res = await fetch("http://192.168.5.1:5000/verify-otp-reset", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp, newPassword: newPass })

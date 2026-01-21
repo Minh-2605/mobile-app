@@ -55,7 +55,17 @@ export default function ProfileScreen() {
           </View>
           <ThemedText style={styles.emailValue}>{userEmail || "Chưa cập nhật"}</ThemedText>
         </View>
-
+        <TouchableOpacity 
+          style={styles.menuItem} 
+          onPress={() => router.push('/order-history')}
+          activeOpacity={0.6}
+        >
+          <View style={styles.menuLeft}>
+            <IconSymbol name="bag.fill" size={20} color="#F8B400" />
+            <ThemedText style={styles.menuItemText}>Đơn hàng của tôi</ThemedText>
+          </View>
+          <IconSymbol name="chevron.right" size={18} color="#CCC" />
+        </TouchableOpacity>
         <View style={styles.menuContainer}>
            <TouchableOpacity 
               style={styles.menuItem} 

@@ -19,7 +19,7 @@ export default function PaymentScreen() {
       return;
     }
 
-    fetch("http://192.168.100.220:5000/create-vnpay-qr", {
+    fetch("http://192.168.5.1:5000/create-vnpay-qr", {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ amount: finalAmount }) // GỬI BIẾN FINALAMOUNT

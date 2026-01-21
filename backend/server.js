@@ -91,50 +91,6 @@ app.get('/products', async (req, res) => {
 });
 
 
-app.post('/checkout', (req, res) => {
-    const total_price = Number(req.body.total_price);
-    const { receiver_name, phone, address, items } = req.body;
-
-    // Bước 1: Lưu thông tin đơn hàng và người nhận vào bảng orders
-    const sqlOrder = "INSERT INTO orders (receiver_name, phone, address, total_price) VALUES (?, ?, ?, ?)";
-
-    const isNumeric = /^\d+$/.test(phone);
-
-    if (!isNumeric) {
-        return res.status(400).json({ error: "Số điện thoại không hợp lệ" });
-    }
-
-    db.query(sqlOrder, [receiver_name, phone, address, total_price], (err, result) => {
-        if (err) {
-            console.error("Lỗi lưu orders:", err);
-            return res.status(500).json({ error: err.message });
-        }
-
-        const orderId = result.insertId; // Lấy ID của đơn hàng vừa tạo
-
-        // Bước 2: Chuẩn bị dữ liệu để lưu nhiều món ăn cùng lúc vào order_items
-        // Xử lý giá tiền để đảm bảo luôn là số
-        const itemValues = items.map(item => [
-            orderId,
-            item.id,
-            item.quantity,
-            typeof item.price === 'number' ? item.price : parseInt(item.price.toString().replace(/[^0-9]/g, ''))
-        ]);
-
-        const sqlItems = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?";
-
-        db.query(sqlItems, [itemValues], (err2) => {
-            if (err2) {
-                console.error("Lỗi lưu order_items:", err2);
-                return res.status(500).json({ error: err2.message });
-            }
-
-            console.log(`Đơn hàng #${orderId} đã được lưu thành công!`);
-            res.json({ message: "Đặt hàng thành công!", orderId: orderId });
-        });
-    });
-});
-
 const nodemailer = require('nodemailer');
 
 // 1. Cấu hình gửi email dùng App Password (16 ký tự)
@@ -307,4 +263,69 @@ app.listen(PORT, () => {
 });
 
 
+app.get('/orders', (req, res) => {
+    const email = req.query.email;
+    if (!email) return res.status(400).json({ error: "Thiếu email" });
 
+    // Câu lệnh lấy đơn hàng và gộp tên sản phẩm thành chuỗi "Tên x SL"
+    const sql = `
+        SELECT o.*, 
+        (SELECT GROUP_CONCAT(CONCAT(p.name, ' x', oi.quantity) SEPARATOR ', ') 
+         FROM order_items oi 
+         JOIN products p ON oi.product_id = p.id 
+         WHERE oi.order_id = o.id) as display_items
+        FROM orders o 
+        WHERE o.email = ? 
+        ORDER BY o.id DESC`;
+
+    db.query(sql, [email], (err, results) => {
+        if (err) {
+            console.error("Lỗi SQL:", err);
+            return res.status(500).json(err);
+        }
+        res.json(results);
+    });
+});
+
+app.post('/checkout', (req, res) => {
+    // Lấy dữ liệu từ App gửi lên
+    // CHÚ Ý: Phải có 'email' ở đây để không bị lỗi "not defined"
+    const { receiver_name, phone, address, items, email } = req.body; 
+    const total_price = Number(req.body.total_price);
+
+    // Kiểm tra số điện thoại
+    const isNumeric = /^\d+$/.test(phone);
+    if (!isNumeric) {
+        return res.status(400).json({ error: "Số điện thoại không hợp lệ" });
+    }
+
+    // Lưu vào bảng orders (Sử dụng cột email bạn đã thêm vào DB)
+    const sqlOrder = "INSERT INTO orders (receiver_name, phone, address, total_price, email) VALUES (?, ?, ?, ?, ?)";
+
+    db.query(sqlOrder, [receiver_name, phone, address, total_price, email], (err, result) => {
+        if (err) {
+            console.error("Lỗi lưu orders:", err);
+            return res.status(500).json({ error: err.message });
+        }
+
+        const orderId = result.insertId;
+
+        // Lưu chi tiết sản phẩm vào order_items
+        const itemValues = items.map(item => [
+            orderId,
+            item.id,
+            item.quantity,
+            typeof item.price === 'number' ? item.price : parseInt(item.price.toString().replace(/[^0-9]/g, ''))
+        ]);
+
+        const sqlItems = "INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ?";
+
+        db.query(sqlItems, [itemValues], (err2) => {
+            if (err2) {
+                console.error("Lỗi lưu order_items:", err2);
+                return res.status(500).json({ error: err2.message });
+            }
+            res.json({ message: "Đặt hàng thành công!", orderId: orderId });
+        });
+    });
+});

@@ -10,7 +10,7 @@ export default function LoginScreen() {
     const router = useRouter();
 
     // KIỂM TRA LẠI: Đảm bảo IP này trùng với IPv4 máy tính của bạn
-    const API_URL = 'http://192.168.100.220:5000/login';
+    const API_URL = 'http://192.168.5.1:5000/login';
 
     const handleLogin = async () => {
         // 1. Kiểm tra đầu vào

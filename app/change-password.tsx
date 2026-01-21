@@ -22,7 +22,7 @@ export default function ChangePassword() {
     }
 
     try {
-      const res = await fetch("http://192.168.100.220:5000/change-password", {
+      const res = await fetch("http://192.168.5.1:5000/change-password", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, oldPassword: oldPass, newPassword: newPass })
