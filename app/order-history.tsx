@@ -23,9 +23,9 @@ export default function OrderHistoryScreen() {
       // Đảm bảo IP này đúng với server của bạn
       const response = await fetch(`http://192.168.5.1:5000/orders?email=${email}`);
       const data = await response.json();
-      
+
       // Server đã sắp xếp DESC nên không cần .reverse() nếu đã có ORDER BY id DESC trong SQL
-      setOrders(data); 
+      setOrders(data);
     } catch (error) {
       console.error("Lỗi lấy đơn hàng:", error);
     } finally {
@@ -43,13 +43,13 @@ export default function OrderHistoryScreen() {
   };
 
   const renderOrderItem = ({ item }: { item: any }) => (
-    <TouchableOpacity 
+    <TouchableOpacity
       style={styles.orderCard}
       onPress={() => router.push({
-          pathname: '/order-detail',
-          params: { id: item.id }
+        pathname: '/order-detail',
+        params: { id: item.id }
       })}
-    > 
+    >
       <View style={styles.orderHeader}>
         <ThemedText style={styles.orderId}>Mã đơn: #{item.id}</ThemedText>
         <ThemedText style={[styles.status, { color: item.status === 'Completed' ? '#4CAF50' : '#F8B400' }]}>
@@ -61,7 +61,7 @@ export default function OrderHistoryScreen() {
 
       {/* Hiển thị tóm tắt món ăn lấy từ display_items (GROUP_CONCAT từ Server) */}
       <ThemedText style={styles.productInfo} numberOfLines={2}>
-         {item.display_items || "Không có dữ liệu món ăn"}
+        {item.display_items || "Không có dữ liệu món ăn"}
       </ThemedText>
 
       <View style={styles.orderFooter}>
@@ -126,10 +126,10 @@ const styles = StyleSheet.create({
   status: { fontWeight: '700', fontSize: 14 },
   divider: { height: 1, backgroundColor: '#F0F0F0', marginBottom: 12 },
   productInfo: { color: '#666', fontSize: 14, marginBottom: 10, lineHeight: 20 },
-  orderFooter: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    marginTop: 5, 
+  orderFooter: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 5,
     alignItems: 'center',
     borderTopWidth: 0.5,
     borderTopColor: '#F0F0F0',

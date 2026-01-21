@@ -6,7 +6,11 @@ const mysql = require('mysql2'); // 1. Import mysql2
 const app = express();
 app.use(express.json());
 app.use(cors());
-
+app.use(cors({
+    origin: '*', // Cho phép tất cả các nguồn
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Bắt buộc phải có DELETE ở đây
+    allowedHeaders: ['Content-Type', 'Authorization']
+}));
 const JWT_SECRET = "bi-mat-cua-toi-123";
 
 // 2. Kết nối tới XAMPP MySQL
@@ -68,8 +72,8 @@ app.post('/login', async (req, res) => {
         const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
 
         // Trả về thêm thông tin user để App lưu vào AsyncStorage
-        res.json({ 
-            message: "Đăng nhập thành công!", 
+        res.json({
+            message: "Đăng nhập thành công!",
             token,
             user: {
                 email: user.email,
@@ -241,7 +245,7 @@ app.get('/orders', (req, res) => {
 app.post('/checkout', (req, res) => {
     // Lấy dữ liệu từ App gửi lên
     // CHÚ Ý: Phải có 'email' ở đây để không bị lỗi "not defined"
-    const { receiver_name, phone, address, items, email } = req.body; 
+    const { receiver_name, phone, address, items, email } = req.body;
     const total_price = Number(req.body.total_price);
 
     // Kiểm tra số điện thoại
@@ -283,10 +287,10 @@ app.post('/checkout', (req, res) => {
 
 app.get('/orders/:id', (req, res) => {
     const orderId = req.params.id;
-    
+
     // 1. Lấy thông tin đơn hàng (người nhận, phone, địa chỉ...)
     const sqlOrder = "SELECT * FROM orders WHERE id = ?";
-    
+
     // 2. Lấy chi tiết từng món ăn trong đơn hàng đó
     const sqlItems = `
         SELECT oi.*, p.name 
@@ -300,7 +304,7 @@ app.get('/orders/:id', (req, res) => {
 
         db.query(sqlItems, [orderId], (err2, itemResults) => {
             if (err2) return res.status(500).json(err2);
-            
+
             // Gộp thông tin đơn và danh sách món để gửi về App
             res.json({
                 ...orderResults[0],
@@ -313,12 +317,12 @@ app.get('/orders/:id', (req, res) => {
 // Lấy danh sách sản phẩm (đã có)
 // Thêm sản phẩm mới
 app.post('/products', (req, res) => {
-  const { name, price, category, image, description } = req.body;
-  const query = "INSERT INTO products (name, price, category, image, description) VALUES (?, ?, ?, ?, ?)";
-  db.query(query, [name, price, category, image, description], (err, result) => {
-    if (err) return res.status(500).send(err);
-    res.send({ message: "Thêm thành công", id: result.insertId });
-  });
+    const { name, price, category, image, description } = req.body;
+    const query = "INSERT INTO products (name, price, category, image, description) VALUES (?, ?, ?, ?, ?)";
+    db.query(query, [name, price, category, image, description], (err, result) => {
+        if (err) return res.status(500).send(err);
+        res.send({ message: "Thêm thành công", id: result.insertId });
+    });
 });
 // API Xóa sản phẩm
 app.delete('/products/:id', (req, res) => {
@@ -326,13 +330,13 @@ app.delete('/products/:id', (req, res) => {
     console.log("===> Server nhận yêu cầu xóa ID:", productId); // Kiểm tra log tại terminal
 
     // Sử dụng cột 'id' viết thường như bạn đã xác nhận
-    const sql = "DELETE FROM products WHERE id = ?"; 
+    const sql = "DELETE FROM products WHERE id = ?";
     db.query(sql, [productId], (err, result) => {
         if (err) {
             console.error("Lỗi MySQL:", err);
             return res.status(500).json({ message: "Lỗi hệ thống", error: err });
         }
-        
+
         if (result.affectedRows === 0) {
             return res.status(404).json({ message: "Không tìm thấy sản phẩm để xóa" });
         }
@@ -349,19 +353,21 @@ app.post('/products', (req, res) => {
         res.json({ message: "Thêm thành công", id: result.insertId });
     });
 });
-// 1. API lấy chi tiết 1 sản phẩm theo ID
+// 1. API Lấy chi tiết 1 sản phẩm để hiện lên form Edit
 app.get('/products/:id', (req, res) => {
-    db.query("SELECT * FROM products WHERE id = ?", [req.params.id], (err, results) => {
+    const { id } = req.params;
+    db.query("SELECT * FROM products WHERE id = ?", [id], (err, result) => {
         if (err) return res.status(500).json(err);
-        res.json(results[0]);
+        res.json(result[0]); // Trả về món ăn đầu tiên tìm thấy
     });
 });
 
-// 2. API cập nhật sản phẩm (PUT)
+// 2. API Cập nhật sản phẩm
 app.put('/products/:id', (req, res) => {
+    const { id } = req.params;
     const { name, price, category, image, description } = req.body;
     const sql = "UPDATE products SET name=?, price=?, category=?, image=?, description=? WHERE id=?";
-    db.query(sql, [name, price, category, image, description, req.params.id], (err) => {
+    db.query(sql, [name, price, category, image, description, id], (err, result) => {
         if (err) return res.status(500).json(err);
         res.json({ message: "Cập nhật thành công" });
     });

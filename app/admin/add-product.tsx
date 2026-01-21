@@ -59,31 +59,31 @@ export default function AddProductScreen() {
           <Ionicons name="close" size={28} color="black" />
         </TouchableOpacity>
         <ThemedText type="subtitle">Thêm món ăn mới</ThemedText>
-        <View style={{ width: 28 }} /> 
+        <View style={{ width: 28 }} />
       </View>
 
       <View style={styles.form}>
         <ThemedText style={styles.label}>Tên món ăn *</ThemedText>
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           placeholder="Ví dụ: Burger Gà Cay"
           value={form.name}
-          onChangeText={(txt) => setForm({...form, name: txt})}
+          onChangeText={(txt) => setForm({ ...form, name: txt })}
         />
 
         <ThemedText style={styles.label}>Giá tiền (VNĐ) *</ThemedText>
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           keyboardType="numeric"
           placeholder="Ví dụ: 50000"
           value={form.price}
-          onChangeText={(txt) => setForm({...form, price: txt})}
+          onChangeText={(txt) => setForm({ ...form, price: txt })}
         />
 
         {/* PHẦN DROP LIST CHỌN DANH MỤC */}
         <ThemedText style={styles.label}>Danh mục *</ThemedText>
-        <TouchableOpacity 
-          style={styles.dropdownTrigger} 
+        <TouchableOpacity
+          style={styles.dropdownTrigger}
           onPress={() => setIsModalVisible(true)}
         >
           <ThemedText style={{ color: form.category ? '#000' : '#999' }}>
@@ -93,20 +93,20 @@ export default function AddProductScreen() {
         </TouchableOpacity>
 
         <ThemedText style={styles.label}>Link hình ảnh *</ThemedText>
-        <TextInput 
-          style={styles.input} 
+        <TextInput
+          style={styles.input}
           placeholder="Dán link ảnh (https://...)"
           value={form.image}
-          onChangeText={(txt) => setForm({...form, image: txt})}
+          onChangeText={(txt) => setForm({ ...form, image: txt })}
         />
 
         <ThemedText style={styles.label}>Mô tả</ThemedText>
-        <TextInput 
-          style={[styles.input, { height: 100 }]} 
+        <TextInput
+          style={[styles.input, { height: 100 }]}
           multiline
           placeholder="Hương vị thơm ngon..."
           value={form.description}
-          onChangeText={(txt) => setForm({...form, description: txt})}
+          onChangeText={(txt) => setForm({ ...form, description: txt })}
         />
 
         <TouchableOpacity style={styles.submitBtn} onPress={handleAdd}>
@@ -123,10 +123,10 @@ export default function AddProductScreen() {
               data={CATEGORIES}
               keyExtractor={(item) => item.value}
               renderItem={({ item }) => (
-                <TouchableOpacity 
+                <TouchableOpacity
                   style={styles.categoryOption}
                   onPress={() => {
-                    setForm({...form, category: item.value});
+                    setForm({ ...form, category: item.value });
                     setIsModalVisible(false);
                   }}
                 >
@@ -135,8 +135,8 @@ export default function AddProductScreen() {
                 </TouchableOpacity>
               )}
             />
-            <TouchableOpacity 
-              style={styles.closeModalBtn} 
+            <TouchableOpacity
+              style={styles.closeModalBtn}
               onPress={() => setIsModalVisible(false)}
             >
               <ThemedText style={{ color: '#FF4D4D', fontWeight: 'bold' }}>Hủy bỏ</ThemedText>
@@ -154,17 +154,17 @@ const styles = StyleSheet.create({
   form: { padding: 20 },
   label: { fontWeight: '600', marginBottom: 5, marginTop: 15 },
   input: { backgroundColor: '#F3F4F6', borderRadius: 10, padding: 12, fontSize: 16 },
-  
+
   // Style cho Dropdown
-  dropdownTrigger: { 
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center', 
-    backgroundColor: '#F3F4F6', 
-    borderRadius: 10, 
-    padding: 12 
+  dropdownTrigger: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 10,
+    padding: 12
   },
-  
+
   // Style cho Modal
   modalOverlay: { flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'flex-end' },
   modalContent: { backgroundColor: '#fff', borderTopLeftRadius: 25, borderTopRightRadius: 25, padding: 20, maxHeight: '50%' },

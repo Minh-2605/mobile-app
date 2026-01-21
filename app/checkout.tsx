@@ -12,7 +12,7 @@ export default function CheckoutScreen() {
     const [name, setName] = useState('');
     const [phone, setPhone] = useState('');
     const [address, setAddress] = useState('');
-    
+
     const [shippingMethod, setShippingMethod] = useState<'normal' | 'fast'>('normal');
 
     const shippingFee = shippingMethod === 'normal' ? 10000 : 30000;
@@ -35,7 +35,7 @@ export default function CheckoutScreen() {
             const userEmail = await AsyncStorage.getItem('userEmail');
 
             console.log("Bắt đầu gửi đơn hàng cho:", userEmail);
-            
+
             const response = await fetch("http://192.168.5.1:5000/checkout", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -78,16 +78,16 @@ export default function CheckoutScreen() {
                 <TextInput style={[styles.input, { height: 80 }]} value={address} onChangeText={setAddress} placeholder="Số nhà, tên đường..." multiline />
 
                 <ThemedText style={styles.label}>Phương thức giao hàng</ThemedText>
-                
+
                 <View style={styles.radioContainer}>
-                    <TouchableOpacity 
-                        style={styles.radioItem} 
+                    <TouchableOpacity
+                        style={styles.radioItem}
                         onPress={() => setShippingMethod('normal')}
                     >
-                        <Ionicons 
-                            name={shippingMethod === 'normal' ? "radio-button-on" : "radio-button-off"} 
-                            size={24} 
-                            color={shippingMethod === 'normal' ? "#F8B400" : "#ccc"} 
+                        <Ionicons
+                            name={shippingMethod === 'normal' ? "radio-button-on" : "radio-button-off"}
+                            size={24}
+                            color={shippingMethod === 'normal' ? "#F8B400" : "#ccc"}
                         />
                         <View style={styles.radioTextContainer}>
                             <ThemedText style={styles.methodName}>Giao hàng bình thường</ThemedText>
@@ -95,14 +95,14 @@ export default function CheckoutScreen() {
                         </View>
                     </TouchableOpacity>
 
-                    <TouchableOpacity 
-                        style={styles.radioItem} 
+                    <TouchableOpacity
+                        style={styles.radioItem}
                         onPress={() => setShippingMethod('fast')}
                     >
-                        <Ionicons 
-                            name={shippingMethod === 'fast' ? "radio-button-on" : "radio-button-off"} 
-                            size={24} 
-                            color={shippingMethod === 'fast' ? "#F8B400" : "#ccc"} 
+                        <Ionicons
+                            name={shippingMethod === 'fast' ? "radio-button-on" : "radio-button-off"}
+                            size={24}
+                            color={shippingMethod === 'fast' ? "#F8B400" : "#ccc"}
                         />
                         <View style={styles.radioTextContainer}>
                             <ThemedText style={styles.methodName}>Giao hàng hỏa tốc</ThemedText>

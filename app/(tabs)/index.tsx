@@ -43,13 +43,13 @@ export default function HomeScreen() {
         await fetchProducts();
       }
     };
-    
+
     initializeData();
     const getRole = async () => {
-    const storedRole = await AsyncStorage.getItem('userRole');
-    setRole(storedRole);
-  };
-  getRole();
+      const storedRole = await AsyncStorage.getItem('userRole');
+      setRole(storedRole);
+    };
+    getRole();
   }, []);
 
   const fetchProducts = async () => {
@@ -106,15 +106,15 @@ export default function HomeScreen() {
       setFilteredFoods(filtered);
     }
   };
-  
+
 
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#F8B400', dark: '#2D2D2D' }}
       headerImage={
-        <Image 
-          source={{ uri: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000' }} 
-          style={styles.headerBanner} 
+        <Image
+          source={{ uri: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?q=80&w=1000' }}
+          style={styles.headerBanner}
           contentFit="cover"
         />
       }>
@@ -127,14 +127,14 @@ export default function HomeScreen() {
         <HelloWave />
       </ThemedView>
       {role === 'admin' && (
-  <TouchableOpacity 
-    style={styles.adminBadge} 
-    onPress={() => router.push("/admin/" as any)} // Chỉ định rõ file index
-  >
-    <Ionicons name="shield-checkmark" size={16} color="white" />
-    <ThemedText style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}> TRANG QUẢN TRỊ</ThemedText>
-  </TouchableOpacity>
-)}
+        <TouchableOpacity
+          style={styles.adminBadge}
+          onPress={() => router.push("/admin/" as any)} // Chỉ định rõ file index
+        >
+          <Ionicons name="shield-checkmark" size={16} color="white" />
+          <ThemedText style={{ color: 'white', fontSize: 12, fontWeight: 'bold' }}> TRANG QUẢN TRỊ</ThemedText>
+        </TouchableOpacity>
+      )}
       <View style={styles.searchContainer}>
         <Ionicons name="search" size={20} color="#888" style={styles.searchIcon} />
         <TextInput
@@ -214,13 +214,13 @@ const styles = StyleSheet.create({
   titleContainer: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 5, marginTop: 10 },
   welcomeText: { fontSize: 28, fontWeight: '800' },
   subWelcome: { color: '#666', fontSize: 16 },
-  
-  searchContainer: { 
-    flexDirection: 'row', 
-    alignItems: 'center', 
-    backgroundColor: '#F3F4F6', 
-    borderRadius: 15, 
-    paddingHorizontal: 15, 
+
+  searchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#F3F4F6',
+    borderRadius: 15,
+    paddingHorizontal: 15,
     marginVertical: 15,
     height: 50
   },
@@ -238,11 +238,11 @@ const styles = StyleSheet.create({
   categoryText: { color: '#555', fontSize: 14, fontWeight: '500' },
   categoryTextActive: { color: '#fff', fontWeight: 'bold' },
 
-  foodCard: { 
-    flexDirection: 'row', 
-    backgroundColor: '#fff', 
-    borderRadius: 20, 
-    padding: 10, 
+  foodCard: {
+    flexDirection: 'row',
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    padding: 10,
     marginBottom: 16,
     ...Platform.select({
       ios: { shadowColor: '#000', shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.1, shadowRadius: 8 },
@@ -257,20 +257,20 @@ const styles = StyleSheet.create({
   tagText: { fontSize: 10, color: '#F8B400', fontWeight: 'bold' },
   priceText: { color: '#FF4D4D', fontWeight: '800', fontSize: 18, marginVertical: 2 },
   descText: { fontSize: 13, color: '#888', fontStyle: 'italic' },
-  
+
 
 
   noResultBox: { alignItems: 'center', marginTop: 40, gap: 10 },
   noResultText: { color: '#999', fontSize: 16 },
 
   adminBadge: {
-  backgroundColor: '#FF4D4D',
-  flexDirection: 'row',
-  paddingHorizontal: 12,
-  paddingVertical: 6,
-  borderRadius: 20,
-  alignSelf: 'flex-start',
-  marginTop: 10,
-  alignItems: 'center'
-},
+    backgroundColor: '#FF4D4D',
+    flexDirection: 'row',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 20,
+    alignSelf: 'flex-start',
+    marginTop: 10,
+    alignItems: 'center'
+  },
 });
