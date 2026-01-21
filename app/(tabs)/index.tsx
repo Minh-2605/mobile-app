@@ -17,6 +17,7 @@ const CATEGORIES = [
   { id: 'pizza', name: 'Pizza', icon: '🍕' },
   { id: 'chicken', name: 'Gà rán', icon: '🍗' },
   { id: 'drink', name: 'Đồ uống', icon: '🥤' },
+  { id: 'fries', name: 'Khoai tây', icon: '🍟' },
   { id: 'pasta', name: 'Mì Ý', icon: '🍝' },
 ];
 

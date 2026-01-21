@@ -15,7 +15,7 @@ export default function CheckoutScreen() {
     
     const [shippingMethod, setShippingMethod] = useState<'normal' | 'fast'>('normal');
 
-    const shippingFee = shippingMethod === 'normal' ? 5000 : 20000;
+    const shippingFee = shippingMethod === 'normal' ? 10000 : 30000;
     const finalTotal = Number(total) + shippingFee;
 
     const handleConfirmOrder = async () => {
@@ -91,7 +91,7 @@ export default function CheckoutScreen() {
                         />
                         <View style={styles.radioTextContainer}>
                             <ThemedText style={styles.methodName}>Giao hàng bình thường</ThemedText>
-                            <ThemedText style={styles.methodFee}>+5.000đ</ThemedText>
+                            <ThemedText style={styles.methodFee}>10.000đ</ThemedText>
                         </View>
                     </TouchableOpacity>
 
@@ -106,7 +106,7 @@ export default function CheckoutScreen() {
                         />
                         <View style={styles.radioTextContainer}>
                             <ThemedText style={styles.methodName}>Giao hàng hỏa tốc</ThemedText>
-                            <ThemedText style={styles.methodFee}>+20.000đ</ThemedText>
+                            <ThemedText style={styles.methodFee}>30.000đ</ThemedText>
                         </View>
                     </TouchableOpacity>
                 </View>

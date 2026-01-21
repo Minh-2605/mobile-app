@@ -196,64 +196,6 @@ app.post('/change-password', async (req, res) => {
 });
 
 
-const moment = require('moment');
-const crypto = require('crypto');
-const qs = require('qs');
-
-app.use(cors());
-app.use(express.json());
-
-app.post('/create-vnpay-qr', (req, res) => {
-    const { amount } = req.body;
-    console.log("Số tiền Server nhận được từ App:", amount);
-    const date = new Date();
-    const createDate = moment(date).format('YYYYMMDDHHmmss');
-
-    const tmnCode = "8ZLFVM2Q";
-    const secretKey = "KKBMG7C8TKAQ5MQDGJ35NH5EBT9H8AN8";
-    const vnpUrl = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    const returnUrl = "myapp://payment-result";
-
-    let vnp_Params = {
-        'vnp_Version': '2.1.0',
-        'vnp_Command': 'pay',
-        'vnp_TmnCode': tmnCode,
-        'vnp_Locale': 'vn',
-        'vnp_CurrCode': 'VND',
-        'vnp_TxnRef': moment(date).format('YYYYMMDDHHmmss'),
-        'vnp_OrderInfo': 'Thanh toan don hang QR',
-        'vnp_OrderType': 'other',
-        'vnp_Amount': Math.floor(amount * 100),
-        'vnp_ReturnUrl': returnUrl,
-        'vnp_IpAddr': '127.0.0.1',
-        'vnp_CreateDate': createDate,
-    };
-
-    // BƯỚC 1: Sắp xếp tham số (Hàm sortObject thủ công)
-    const sortedParams = {};
-    const keys = Object.keys(vnp_Params).sort();
-    for (let i = 0; i < keys.length; i++) {
-        const key = keys[i];
-        const value = vnp_Params[key];
-        // Quan trọng: Encode và thay %20 thành dấu + đúng như bạn tìm hiểu
-        sortedParams[key] = encodeURIComponent(value).replace(/%20/g, "+");
-    }
-
-    // BƯỚC 2: Tạo chuỗi băm signData từ các params đã sort và format
-    const signData = Object.keys(sortedParams)
-        .map(key => `${key}=${sortedParams[key]}`)
-        .join('&');
-
-    // BƯỚC 3: Băm HMAC-SHA512
-    const hmac = crypto.createHmac("sha512", secretKey);
-    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest("hex");
-
-    // BƯỚC 4: Tạo URL cuối cùng (Nối thêm SecureHash)
-    const finalUrl = vnpUrl + '?' + signData + '&vnp_SecureHash=' + signed;
-
-    console.log("===> LINK CHUẨN FORMAT VNPAY:", finalUrl);
-    res.json({ paymentUrl: finalUrl });
-});
 
 
 const PORT = 5000;
@@ -326,6 +268,35 @@ app.post('/checkout', (req, res) => {
                 return res.status(500).json({ error: err2.message });
             }
             res.json({ message: "Đặt hàng thành công!", orderId: orderId });
+        });
+    });
+});
+
+app.get('/orders/:id', (req, res) => {
+    const orderId = req.params.id;
+    
+    // 1. Lấy thông tin đơn hàng (người nhận, phone, địa chỉ...)
+    const sqlOrder = "SELECT * FROM orders WHERE id = ?";
+    
+    // 2. Lấy chi tiết từng món ăn trong đơn hàng đó
+    const sqlItems = `
+        SELECT oi.*, p.name 
+        FROM order_items oi 
+        JOIN products p ON oi.product_id = p.id 
+        WHERE oi.order_id = ?`;
+
+    db.query(sqlOrder, [orderId], (err, orderResults) => {
+        if (err) return res.status(500).json(err);
+        if (orderResults.length === 0) return res.status(404).json({ message: "Không tìm thấy đơn hàng" });
+
+        db.query(sqlItems, [orderId], (err2, itemResults) => {
+            if (err2) return res.status(500).json(err2);
+            
+            // Gộp thông tin đơn và danh sách món để gửi về App
+            res.json({
+                ...orderResults[0],
+                items: itemResults
+            });
         });
     });
 });
