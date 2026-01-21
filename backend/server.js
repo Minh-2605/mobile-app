@@ -64,9 +64,20 @@ app.post('/login', async (req, res) => {
             return res.status(400).json({ message: "Mật khẩu không đúng!" });
         }
 
-        const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '1h' });
-        res.json({ message: "Đăng nhập thành công!", token });
+        // Tạo token mang theo cả role để bảo mật hơn
+        const token = jwt.sign({ id: user.id, role: user.role }, JWT_SECRET, { expiresIn: '1h' });
+
+        // Trả về thêm thông tin user để App lưu vào AsyncStorage
+        res.json({ 
+            message: "Đăng nhập thành công!", 
+            token,
+            user: {
+                email: user.email,
+                role: user.role // 'admin' hoặc 'user'
+            }
+        });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ message: "Lỗi hệ thống" });
     }
 });
@@ -196,8 +207,6 @@ app.post('/change-password', async (req, res) => {
 });
 
 
-
-
 const PORT = 5000;
 app.listen(PORT, () => {
     console.log(`Server đang chạy tại http://localhost:${PORT}`);
@@ -298,5 +307,62 @@ app.get('/orders/:id', (req, res) => {
                 items: itemResults
             });
         });
+    });
+});
+
+// Lấy danh sách sản phẩm (đã có)
+// Thêm sản phẩm mới
+app.post('/products', (req, res) => {
+  const { name, price, category, image, description } = req.body;
+  const query = "INSERT INTO products (name, price, category, image, description) VALUES (?, ?, ?, ?, ?)";
+  db.query(query, [name, price, category, image, description], (err, result) => {
+    if (err) return res.status(500).send(err);
+    res.send({ message: "Thêm thành công", id: result.insertId });
+  });
+});
+// API Xóa sản phẩm
+app.delete('/products/:id', (req, res) => {
+    const productId = req.params.id;
+    console.log("===> Server nhận yêu cầu xóa ID:", productId); // Kiểm tra log tại terminal
+
+    // Sử dụng cột 'id' viết thường như bạn đã xác nhận
+    const sql = "DELETE FROM products WHERE id = ?"; 
+    db.query(sql, [productId], (err, result) => {
+        if (err) {
+            console.error("Lỗi MySQL:", err);
+            return res.status(500).json({ message: "Lỗi hệ thống", error: err });
+        }
+        
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: "Không tìm thấy sản phẩm để xóa" });
+        }
+
+        res.json({ message: "Xóa thành công" });
+    });
+});
+// API Thêm sản phẩm mới
+app.post('/products', (req, res) => {
+    const { name, price, category, image, description } = req.body;
+    const sql = "INSERT INTO products (name, price, category, image, description) VALUES (?, ?, ?, ?, ?)";
+    db.query(sql, [name, price, category, image, description], (err, result) => {
+        if (err) return res.status(500).json(err);
+        res.json({ message: "Thêm thành công", id: result.insertId });
+    });
+});
+// 1. API lấy chi tiết 1 sản phẩm theo ID
+app.get('/products/:id', (req, res) => {
+    db.query("SELECT * FROM products WHERE id = ?", [req.params.id], (err, results) => {
+        if (err) return res.status(500).json(err);
+        res.json(results[0]);
+    });
+});
+
+// 2. API cập nhật sản phẩm (PUT)
+app.put('/products/:id', (req, res) => {
+    const { name, price, category, image, description } = req.body;
+    const sql = "UPDATE products SET name=?, price=?, category=?, image=?, description=? WHERE id=?";
+    db.query(sql, [name, price, category, image, description, req.params.id], (err) => {
+        if (err) return res.status(500).json(err);
+        res.json({ message: "Cập nhật thành công" });
     });
 });

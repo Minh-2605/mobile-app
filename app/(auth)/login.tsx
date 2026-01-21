@@ -13,43 +13,47 @@ export default function LoginScreen() {
     const API_URL = 'http://192.168.5.1:5000/login';
 
     const handleLogin = async () => {
-        // 1. Kiểm tra đầu vào
-        if (!email || !password) {
-            Alert.alert("Thông báo", "Vui lòng nhập đầy đủ email và mật khẩu");
-            return;
-        }
+    // 1. Kiểm tra đầu vào
+    if (!email || !password) {
+        Alert.alert("Thông báo", "Vui lòng nhập đầy đủ email và mật khẩu");
+        return;
+    }
 
-        setLoading(true);
-        try {
-            // 2. Gửi yêu cầu tới Backend
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
+    setLoading(true);
+    try {
+        // 2. Gửi yêu cầu tới Backend
+        const response = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password }),
+        });
 
-            const data = await response.json();
+        const data = await response.json();
 
-            // 3. Xử lý kết quả trả về
-            if (response.ok) {
-                await AsyncStorage.setItem('userToken', data.token);
-                await AsyncStorage.setItem('userEmail', email);
-
-                setTimeout(() => {
-                    // Thử thay đổi sang đường dẫn trực tiếp của file index
-                    router.replace('/(tabs)');
-                    // Hoặc nếu vẫn không được, hãy thử: router.push('/(tabs)');
-                }, 100);
-            } else {
-                Alert.alert("Thất bại", data.message || "Email hoặc mật khẩu không đúng");
+        // 3. Xử lý kết quả trả về
+        if (response.ok) {
+            // Lưu Token và Email như cũ
+            await AsyncStorage.setItem('userToken', data.token);
+            await AsyncStorage.setItem('userEmail', email);
+            
+            // QUAN TRỌNG: Lưu thêm Role (quyền hạn) nhận được từ Backend
+            if (data.user && data.user.role) {
+                await AsyncStorage.setItem('userRole', data.user.role);
             }
-        } catch (error: any) {
-            // Sửa lỗi 'unknown' type bằng cách thêm : any
-            Alert.alert("Lỗi kết nối", "Không thể kết nối tới server. Lỗi: " + (error.message || "Unknown error"));
-        } finally {
-            setLoading(false);
+
+            setTimeout(() => {
+                // Chuyển hướng sang trang chính
+                router.replace('/(tabs)');
+            }, 100);
+        } else {
+            Alert.alert("Thất bại", data.message || "Email hoặc mật khẩu không đúng");
         }
-    };
+    } catch (error: any) {
+        Alert.alert("Lỗi kết nối", "Không thể kết nối tới server. Lỗi: " + (error.message || "Unknown error"));
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
