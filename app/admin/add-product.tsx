@@ -1,10 +1,10 @@
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, FlatList } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { useState } from 'react';
-import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { Alert, FlatList, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-const API_URL = "http://192.168.5.1:5000/products";
+const API_URL = "http://192.168.100.220:5000/products";
 
 // Danh sách các danh mục cố định
 const CATEGORIES = [

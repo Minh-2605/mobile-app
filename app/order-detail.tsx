@@ -1,9 +1,9 @@
-import { StyleSheet, View, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useLocalSearchParams, router } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { Ionicons } from '@expo/vector-icons';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { Ionicons } from '@expo/vector-icons';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 export default function OrderDetailScreen() {
     const { id } = useLocalSearchParams();
@@ -12,7 +12,7 @@ export default function OrderDetailScreen() {
 
     useEffect(() => {
         // Thay IP cho đúng với máy của bạn
-        fetch(`http://192.168.5.1:5000/orders/${id}`)
+        fetch(`http://192.168.100.220:5000/orders/${id}`)
             .then(res => res.json())
             .then(data => {
                 setOrder(data);

@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView, } from 'react-native';
-import { useRouter } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 
 export default function LoginScreen() {
     const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ export default function LoginScreen() {
     const router = useRouter();
 
     // KIỂM TRA LẠI: Đảm bảo IP này trùng với IPv4 máy tính của bạn
-    const API_URL = 'http://192.168.5.1:5000/login';
+    const API_URL = 'http://192.168.100.220:5000/login';
 
     const handleLogin = async () => {
         // 1. Kiểm tra đầu vào

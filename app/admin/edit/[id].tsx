@@ -1,10 +1,10 @@
-import { View, TextInput, TouchableOpacity, StyleSheet, Alert, ScrollView, Modal, FlatList, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { useState, useEffect } from 'react';
-import { useRouter, useLocalSearchParams } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useLocalSearchParams, useRouter } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, Modal, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-const API_URL = "http://192.168.5.1:5000/products"; // Thay bằng IP server của bạn
+const API_URL = "http://192.168.100.220:5000/products"; // Thay bằng IP server của bạn
 
 const CATEGORIES = [
   { label: 'Burger', value: 'burger' },

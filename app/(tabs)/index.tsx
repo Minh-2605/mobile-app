@@ -1,15 +1,15 @@
-import { Image } from 'expo-image';
-import { StyleSheet, ScrollView, TouchableOpacity, TextInput, View, ActivityIndicator, Platform } from 'react-native';
 import { HelloWave } from '@/components/hello-wave';
 import ParallaxScrollView from '@/components/parallax-scroll-view';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Link, Redirect, useRouter } from 'expo-router'; // Thêm useRouter
-import { useState, useEffect } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // BẮT BUỘC PHẢI THÊM DÒNG NÀY
+import { Image } from 'expo-image';
+import { Link, Redirect, useRouter } from 'expo-router'; // Thêm useRouter
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Platform, ScrollView, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
-const API_URL = "http://192.168.5.1:5000/products";
+const API_URL = "http://192.168.100.220:5000/products";
 
 const CATEGORIES = [
   { id: 'all', name: 'Tất cả', icon: '🍽️' },

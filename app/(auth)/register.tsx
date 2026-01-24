@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, TouchableOpacity, Alert, ActivityIndicator, ScrollView } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useState } from 'react';
+import { ActivityIndicator, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function RegisterScreen() {
     const [email, setEmail] = useState('');
@@ -10,7 +10,7 @@ export default function RegisterScreen() {
     const router = useRouter();
 
     // LƯU Ý: Thay '192.168.X.X' bằng địa chỉ IP thật của máy tính bạn (giống bên Login)
-    const API_URL = 'http://192.168.5.1:5000/register';
+    const API_URL = 'http://192.168.100.220:5000/register';
 
     const handleRegister = async () => {
         setLoading(true);

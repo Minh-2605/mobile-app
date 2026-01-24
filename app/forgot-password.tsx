@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert, View, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
 import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { ActivityIndicator, Alert, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState('');
@@ -14,7 +14,7 @@ export default function ForgotPassword() {
     const handleSendOTP = async () => {
         setLoading(true);
         try {
-            const res = await fetch("http://192.168.5.1:5000/send-otp", {
+            const res = await fetch("http://192.168.100.220:5000/send-otp", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
@@ -39,7 +39,7 @@ export default function ForgotPassword() {
         }
 
         try {
-            const res = await fetch("http://192.168.5.1:5000/verify-otp-reset", {
+            const res = await fetch("http://192.168.100.220:5000/verify-otp-reset", {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, otp, newPassword: newPass })

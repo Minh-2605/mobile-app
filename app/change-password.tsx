@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { StyleSheet, TextInput, TouchableOpacity, Alert, View, KeyboardAvoidingView, Platform } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view'; // 
-import { router } from 'expo-router';
 import { IconSymbol } from '@/components/ui/icon-symbol';
+import { router } from 'expo-router';
+import React, { useState } from 'react';
+import { Alert, KeyboardAvoidingView, Platform, StyleSheet, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function ChangePassword() {
   const [oldPass, setOldPass] = useState('');
@@ -22,7 +22,7 @@ export default function ChangePassword() {
     }
 
     try {
-      const res = await fetch("http://192.168.5.1:5000/change-password", {
+      const res = await fetch("http://192.168.100.220:5000/change-password", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, oldPassword: oldPass, newPassword: newPass })

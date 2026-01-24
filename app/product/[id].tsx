@@ -1,12 +1,12 @@
-import { useLocalSearchParams, router } from 'expo-router';
-import { View, StyleSheet, Image, ScrollView, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
+import { router, useLocalSearchParams } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, Alert, Image, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
 import { addToCart } from '../cart-store';
-import { useState, useEffect } from 'react';
 
 // Sử dụng chung địa chỉ IP với file index
-const API_URL = "http://192.168.5.1:5000/products";
+const API_URL = "http://192.168.100.220:5000/products";
 
 export default function ProductDetailScreen() {
   const { id } = useLocalSearchParams();

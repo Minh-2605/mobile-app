@@ -1,10 +1,10 @@
-import { View, FlatList, TouchableOpacity, StyleSheet, Alert, Image, ActivityIndicator } from 'react-native';
 import { ThemedText } from '@/components/themed-text';
-import { useEffect, useState, useCallback } from 'react';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter, useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
+import { useCallback, useState } from 'react';
+import { ActivityIndicator, Alert, FlatList, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-const API_URL = "http://192.168.5.1:5000/products";
+const API_URL = "http://192.168.100.220:5000/products";
 
 export default function AdminDashboard() {
   const [products, setProducts] = useState<any[]>([]);

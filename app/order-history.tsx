@@ -1,8 +1,8 @@
-import { StyleSheet, FlatList, View, ActivityIndicator, TouchableOpacity } from 'react-native';
-import { useEffect, useState } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { ActivityIndicator, FlatList, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
@@ -21,7 +21,7 @@ export default function OrderHistoryScreen() {
       if (!email) return;
 
       // Đảm bảo IP này đúng với server của bạn
-      const response = await fetch(`http://192.168.5.1:5000/orders?email=${email}`);
+      const response = await fetch(`http://192.168.100.220:5000/orders?email=${email}`);
       const data = await response.json();
 
       // Server đã sắp xếp DESC nên không cần .reverse() nếu đã có ORDER BY id DESC trong SQL
